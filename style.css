@@ -1,0 +1,449 @@
+@import url("inc/MontserratAlt1-Regular.woff");
+@import url('https://fonts.googleapis.com/css2?family=Overlock:wght@400;700&display=swap');
+
+@font-face {
+  font-family: Monsterrat;
+  src: url('inc/MontserratAlt1-Regular.woff');
+}
+
+
+body {
+  background-color: #faf7f0;
+  font-family: 'overlock';
+  margin: 0;
+}
+
+/* Navigation */
+.navbar {
+  display: flex;
+  border-bottom: 1px solid #e5dfd3;
+  margin: 1vw;
+}
+
+.nav-right {
+  flex: 1;
+}
+
+.nav-right a {
+  font-size: 20px;
+  color: black;
+  padding: 0.5vw;
+  text-decoration: none;
+  font-family: 'Overlock', sans-serif;
+  vertical-align: middle;
+}
+
+.nav-right button {
+  padding-left: 0.5vw;
+  padding-right: 0.5vw;
+  margin-left: 1vw;
+  overflow: auto;
+  font-family: 'Overlock', sans-serif;
+  vertical-align: middle;
+}
+
+.nav-left {
+  flex: 2;
+  float: left;
+}
+
+.nav-left img {
+  height: 35px;
+  vertical-align: middle;
+}
+
+.nav-left a {
+  font-family: "Monsterrat";
+  color: #000000;
+  text-decoration: none;
+  font-size: 30px;
+  vertical-align: middle;
+}
+
+nav {
+  text-align: center;
+  position: relative;
+  padding-left: 5px;
+  padding-top: 5px;
+}
+
+/* Footer */
+
+footer {
+  clear: both;
+  padding-top: 1%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-size: 20px;
+  color: black;
+  font-family: 'Overlock', sans-serif;
+  background-color: #ffffff;
+  border-top: 1px solid #474747;
+}
+
+.left-foot {
+  padding-left: 8vw;
+  float: left;
+
+}
+
+.right-foot {
+  float: right;
+  margin-right: 1vw;
+}
+
+.right-foot img {
+  width: 19px;
+  vertical-align: middle;
+}
+
+.left-foot img {
+  margin-left: 1vw;
+  vertical-align: middle;
+}
+
+.right-foot span {
+  vertical-align: middle;
+}
+
+.left-foot a {
+  color: #000000;
+  text-decoration: none;
+  margin-right: 5vw;
+  vertical-align: middle;
+}
+
+/*Home page*/
+.searchbox {
+  float: left;
+  margin-top: 12vh;
+  margin-left: 1.5vw;
+  width: 25vw;
+  height: 19vw;
+  background-color: #ffffff;
+  border-color: #000000;
+  border: 1px solid;
+  padding-left: 1vw;
+  padding-top: 1vw;
+  border-radius: 15px;
+}
+
+.search {
+  border-radius: 5px;
+}
+
+.searchbox input {
+  font-family: 'overlock';
+}
+
+#searchAutor {
+  width: 20vw;
+  height: 1.5em;
+  font-family: 'overlock';
+
+}
+
+#searchTitel {
+  width: 20vw;
+  height: 1.5em;
+  font-family: 'overlock';
+}
+
+#findbuch {
+  text-align: center;
+  font-weight: 700;
+}
+
+#wilkomentext {
+  width: 65vw;
+  float: right;
+  margin: 1.5vw;
+}
+
+#startbild {
+  width: 65vw;
+  height: 20vw;
+  object-fit: cover;
+  margin-top: 7.5vh;
+}
+
+
+/* Bücher seite */
+.btns{
+  display: flex;
+  background-color: #ffffff;
+  float: left;
+  margin-right: 1vw;
+  border-width: 0px;
+  border-radius: 3px;
+  padding: 0.5em;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: 'overlock';
+
+}
+select#sortieren.btns{
+  margin-left: 3vw;
+}
+#searchbar{
+  border-radius: 15px;
+  width: calc(70vw / 3);
+  padding-left: 3em;
+  background: transparent url("Bilder/magnify.svg") no-repeat 1em;
+  background-color: #ffffff;
+  border: 1px solid rgb(66, 66, 66);
+  font-family: 'overlock';
+}
+
+.buchanzahl{
+  margin-left: 4vw;
+  margin-top: 2vh;
+  margin-bottom: 1vh;
+  font-size: smaller;
+  font-weight: 600;
+  font-family: 'overlock';
+}
+.allFilter {
+  float: left;
+  position: fixed;
+}
+
+.buchliste { /*das gesamte angezeigte bücherliste*/
+  margin-left: 4vw;
+  display: flex;
+  flex-wrap: wrap;
+  /* bilder gehen nicht über den viewport hinaus */
+  column-gap: 10px;
+  /* Abstand zwischen den Bildern links richts */
+  row-gap: 15px;
+  /* Abstand zwischen den Bildern oben unten */
+  grid-template-columns: repeat(6, 1fr);
+  /* anzahl bilder in einer reihe */
+  align-items: stretch;
+}
+
+.small-svg{
+  width: calc(80vw / 6); /*kalculiert die breite der Bilder basierend auf 80% des viewports und teilt dies in 6 gleiche teile*/
+  height: auto;
+  border: 1px solid #488470;
+}
+
+.flex { /*die einzelnen bücher in der bücherliste*/
+  display: block;
+  width: calc(90% / 6); /*rechnet 6 gleichgrosse teile von 90% des viewports*/
+}
+#buchtitel{
+  font-weight: 900; /*Die titel werden etwas dicker angezeigt*/
+}
+
+#buchautor{
+  font-size: smaller; /*der Autoren name wird etwas kleiner als die angegebene schriftgrösse*/
+}
+
+#zuruck{
+  text-decoration: none;
+  color: #000000;
+  
+}
+/*Kontakt seite */
+.text {
+  display: flex;
+  margin-left: 4vw;
+}
+
+.beschreibung {
+  flex: 1;
+}
+
+.zeiten {
+  flex: 1;
+  text-align: left;
+  padding-left: 15vw;
+}
+
+#uberschrift {
+  font-size: larger;
+  font-weight: 700;
+  margin-left: 4vw;
+}
+
+#bold {
+  font-weight: 600;
+}
+
+/* google maps responsive machen*/
+iframe {
+  height: 25vh;
+  width: 55vw;
+}
+
+.maps {
+  text-align: center;
+}
+
+/* Stil fuer das Popup-Fenster */
+.popup {
+  display: none;
+  /* Das Popup standardmaessig ausblenden */
+  position: absolute;
+  top: 175px;
+  left: 21vw;
+  transform: translate(-50%, -50%);
+  width: 25vw;
+  height: calc(7em + 2%);
+  padding: 2vw;
+  background-color: #faf7f0;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+}
+.popup h2{
+  margin: 0;
+}
+.popup select{
+  font-family: 'overlock';
+  width: calc(25vw - 3em);
+  height: 2em;
+  margin-bottom: 1em;
+}
+#popbutton{
+  position: relative;
+  display: inline-block;
+}
+
+/* Stil fuer den Schatten hinter dem Popup-Fenster */
+.overlay {
+  display: none;
+  /* Den Overlay standardmaessig ausblenden */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+/* für Buchdetail Seite */
+.detailbild {
+  display: block;
+  width: 25vw;
+  margin-left: 5vw;
+}
+
+.buchdetailTitel {
+  width: 25vw;
+  margin-left: 5vw;
+  margin-top: 10vh;
+}
+
+.buchdetail {
+  width: 60vw;
+  margin-left: 33vw;
+  margin-top: -50vh;
+}
+
+.blättern {
+  text-align: center;
+  margin: 0 auto;
+  width: 40vw;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 5%;
+  margin-bottom: 8%;
+  vertical-align: middle;
+ }
+ .vorseite{
+  text-decoration: none;
+  color: #000000;
+  padding-left: 1vw;
+  padding-right: 1vw;
+  margin-left: 0.5vw;
+  margin-left: 0.5vw;
+  border: 1px solid #000000;
+ }
+ .vorseite:hover{
+  color: #f5f5f5;
+  background-color: #488470;
+  transition: 0.3s;
+
+ }
+ .pfeil {
+  color: #000000;
+  text-decoration: none;
+  margin: 0 10px;
+ }
+ 
+ .pfeil:hover {
+  color:#e5dfd3;
+  transition: 0.3s;
+ }
+ .einsplus:hover {
+  color:#e5dfd3;
+  background-color: #488470;
+  transition: 0.3s;
+ }
+ .einsminus:hover {
+  color:#e5dfd3;
+  background-color: #488470;
+  transition: 0.3s;
+
+ }
+ .einsplus{
+  float: right; 
+  color: #000000;
+  margin-right: 5vw; 
+  padding: 0vw 1vw 0vw 2vw; 
+  border: 1px solid black;
+  border-radius: 5px;
+  text-decoration: none;
+  margin-top: 0.3vw;
+ }
+ 
+.einsminus{
+  float: left;
+  color: #000000;
+  margin-left: 5vw;
+  padding: 0vw 2vw 0vw 1vw;
+  border: 1px solid black;
+  border-radius: 5px;
+  text-decoration: none;
+  margin-top: 0.3vw;
+
+ }
+
+ #blatttext {
+  font-family: 'overlock';
+  text-decoration: none;
+  color: #000000;
+  text-align: center;
+  padding-top: 0.3vw;
+  width: 2vw;
+  height:1.5em;
+  background-color: #faf7f0;
+  border: 1px solid #000000;
+ }
+ 
+ label {
+  margin-right: 10px;
+  margin-left: 0.5vw;
+ }
+
+ .login{
+  align-items: center;
+  background-color: white;
+ }
+ 
+ #logbutton{
+  color: white;
+  background-color: #000000;
+ }
+
+ .kundenEinzeln{
+  display: block;
+  border: 2px solid red;
+ }
+ .error{
+  color:red;
+ }
