@@ -9,6 +9,7 @@
     } ?> </div>
 
     <div class = "nav-right">
+        <p>ugud</p>
     <a href="index.php">Home</a>
     <a href="buecher.php">Bücher</a>
     <a href="kontakt.php">Kontakt</a>
