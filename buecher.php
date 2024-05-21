@@ -57,6 +57,7 @@
             var search = document.getElementById("searchbar").value; // Abrufen des Suchbegriffs
             window.location.href = window.location.pathname + "?search=" + search;
         }
+
     </script>
 </head>
 
@@ -180,7 +181,6 @@
                 <input type="button" name="schliessen" onclick="closeHinzufuegen(event)" value="Schliessen">
             </div>
         </div>
-        
 
         <?php
         // Standard Sortierreihenfolge
@@ -313,8 +313,13 @@
                 echo '<div class="flex">';
                 echo '<a href="buchdetail.php?id=' . $nachricht->id . '"class="BildBuch"><img src="Bilder/book-cover.svg" alt="Bild' . $nachricht->kurztitle . '" class="small-svg"></a> <br>';
                 echo '<em id="buchtitel">' . $nachricht->kurztitle . '</em><br>' .
-                    ' <em id="buchautor">' . $nachricht->autor . '</em><br>' .
-                    '<id="deleteB">';
+                    ' <em id="buchautor">' . $nachricht->autor . '</em><br>';
+                if (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == true) {
+                    echo '<form action="buecher.php" method="post">';
+                    echo '<input type="hidden" name="id" value="'. $nachricht->id .'">';
+                    echo '<button type="submit"><img src="Bilder/delete.svg" alt="Delete"></button>';
+                    echo '</form>'; 
+                }
                 echo '</div>';
                 $reiheZahl += 1;
                 if ($reiheZahl % 6 == 0) {
@@ -322,6 +327,16 @@
                 }
             }
         }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $buchId = $_POST['id'];    
+            // SQL zum Löschen des Buches
+            $sql = "DELETE FROM buecher WHERE id = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':id', $buchId, PDO::PARAM_INT);
+            $stmt->execute(); 
+        }
+
         echo '</div>';
 
 
