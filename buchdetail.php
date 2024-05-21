@@ -33,8 +33,15 @@
         $buchQuery->execute();
         $buch = $buchQuery->fetch(PDO::FETCH_ASSOC);
 
-        // Wenn das Buch gefunden wurde, zeige die Details an
+        if (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == true) {
+            echo '<form action="buchdetail.php" method="post">';
+            echo '<input type="hidden" name="id" value="'. $buchID .'">';
+            echo '<button type="submit"><img src="Bilder/delete.svg" alt="Delete"></button>';
+            echo '</form>';
+        }
+
         if ($buch) {
+            // Buchdetails anzeigen
             echo '<div class="buchdetail">';
             echo '<p><b>Beschreibung:</b> <br> ' . $buch['title'] . '</p>';
             echo '<p><b>Autor:</b> <br>' . $buch['autor'] . '</p>';
@@ -45,11 +52,26 @@
             echo '<div class="buchdetailTitel">';
             echo '<h2>Titel: ' . $buch['kurztitle'] . '</h2>';
             echo '</div>';
+    
+            // Update-Formular nur anzeigen, wenn eingeloggt 
+        if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+            echo '<form action="update_buch.php" method="post" class="buchdetail">';
+            echo '<input type="hidden" name="id" value="' . $buchID . '">';
+            echo '<label>Kurztitel:</label>';
+            echo '<input type="text" name="kurztitle" value="' . htmlspecialchars($buch['kurztitle']) . '">';
+            echo '<label>Autor:</label>';
+            echo '<input type="text" name="autor" value="' . htmlspecialchars($buch['autor']) . '">';
+            echo '<input type="submit" value="Update">';
+            echo '</form>';
+            }
         }
     }
+
+    // Überprüfen, ob das Formular abgesendet wurde
+
     ?>
 
-    <?php include('inc/footer.php') ?>
+<?php include('inc/footer.php') ?>
 
 </body>
 
