@@ -15,7 +15,6 @@
 
         // Funktion zum Schliessen des Popup-Fensters
         function closePopup(event) {
-            event.stopPropagation(); // Stoppt das Event-Bubbling (Ereignisverarbeitung, bei dem ein Ereignis, das an einem bestimmten Element ausgelöst wird, durch die Hierarchie seiner übergeordneten Elemente "aufblubbert" (aufsteigt), bis es das Wurzelelement erreicht.)
             document.getElementById('popup').style.display = 'none';
 
         }
@@ -233,17 +232,11 @@
                 if (isset($_GET['geschlecht'])) {
                     $urlErweiterung .= '&geschlecht=' . $_GET['geschlecht'];
                 }
-                if (isset($_GET['verfasser'])) {
-                    $urlErweiterung .= '&verfasser=' . $_GET['verfasser'];
+                if (isset($_GET['KpE'])) {
+                    $urlErweiterung .= '&KpE=' . $_GET['KpE'];
                 }
                 if (isset($_GET['search'])) {
                     $urlErweiterung .= '&search=' . $_GET['search'];
-                }
-                if (isset($_GET['autor'])) {
-                    $urlErweiterung .= '&autor=' . $_GET['autor'];
-                }
-                if (isset($_GET['titel'])) {
-                    $urlErweiterung .= '&titel=' . $_GET['titel'];    
                 }
             // gibt schliesslich den Wert $urlErweiterung zurück
                 return $urlErweiterung;
