@@ -14,7 +14,7 @@
         }
 
         // Funktion zum Schliessen des Popup-Fensters
-        function closePopup(event) {
+        function closePopup() {
             document.getElementById('popup').style.display = 'none';
 
         }
