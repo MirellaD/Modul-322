@@ -29,15 +29,16 @@
         }
             //nachfolgende 3 funktionen haben das gleiche prinzip, wie die vorherige
 
-        function updateKategorien() {
-            var kategorieU = document.getElementById("kategorien").value;
-            window.location.href = window.location.pathname + "?kategorie=" + kategorieU;
+        function updateGeschlecht() {
+            var geschlechtU = document.getElementById("geschlecht").value;
+            window.location.href = window.location.pathname + "?geschlecht=" + geschlechtU;
         }
 
-        function updateVerfasser() {
-            var verfasserU = document.getElementById("verfas").value;
-            window.location.href = window.location.pathname + "?verfasser=" + verfasserU;
+        function updateKpE() {
+            var EmailU = document.getElementById("KpE").value;
+            window.location.href = window.location.pathname + "?KpE=" + EmailU;
         }
+
         function searchResultat() {
             var search = document.getElementById("searchbar").value; // Abrufen des Suchbegriffs
             window.location.href = window.location.pathname + "?search=" + search;
@@ -58,6 +59,8 @@
         <option value="vornameZA">Vorname(Z-A)</option>
         <option value="nameAZ">Name(A-Z)</option>
         <option value="nameZA">Name(Z-A)</option>
+        <option value="nKunde">neueste Kunden</option>
+        <option value="aeKunde">älteste Kunden</option>
     </select>
     
     <!-- Button zum Oeffnen des Popup-Fensters (ruft die javascript funktion openPopup() auf)-->
@@ -66,31 +69,16 @@
         <div id="popup" class="popup">
             <h2>Alle Filter</h2>
 
-            <select name="kategorien" id="kategorien" onchange="updateKategorien()">
-                <option value="default">kategorien</option>
-                <option value="1">Alte Drucke, Bibeln, Klassische Autoren</option>
-                <option value="2">Geographie und Reisen</option>
-                <option value="3">Geschichtswissenschaften</option>
-                <option value="4">Naturwissenschaften</option>
-                <option value="5">Kinderbücher</option>
-                <option value="6">Moderne Literatur und Kunst</option>
-                <option value="7">Moderne Kunst und Künstlergraphik</option>
-                <option value="8">Kunstwissenschaften</option>
-                <option value="9">Architektur</option>
-                <option value="10">Technik</option>
-                <option value="11">Naturwissenschaften - Medizin</option>
-                <option value="12">Ozeanien</option>
-                <option value="13">Afrika</option>
+            <select name="geschlecht" id="geschlecht" onchange="updateGeschlecht()">
+                <option value="default">Geschlecht</option>
+                <option value="F">Weiblich</option>
+                <option value="M">Männlich</option>
             </select>
             <br>
-            <select name="verfas" id="verfas" onchange="updateVerfasser()">
-                <option value="default">Verfasser</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
+            <select name="KpE" id="KpE" onchange="updateKpE()">
+                <option value="default">Kontakt per Email</option>
+                <option value="1">Ja</option>
+                <option value="0">Nein</option>
             </select>
             <br>
             <div class="allFilter">
@@ -130,6 +118,14 @@
                     $kollone = 'name';
                     $orderSort = 'DESC';
                     break;
+                case 'nKunde':
+                    $kollone = 'kunde_seit';
+                    $orderSort = 'DESC';
+                    break;
+                case 'aeKunde':
+                    $kollone = 'kunde_seit';
+                    $orderSort = 'ASC';
+                    break;
                 case 'default':
                     // Standard Sortierreihenfolge
                     $kollone = 'kid';
@@ -139,25 +135,20 @@
         }
         
         //alle Filter und Suchfunktionen im 'deafult' modus -> machen nichts/sind leer
-        $zustandFilter = '';
-        $kategorie = '';
-        $verfasser = '';
-        $searchTA = '';
-        $searchHome = '';
+        $geschlecht = '';
+        $KpE = '';
+        $searchVN = '';
 
         // Hier werden die einzelnen möglichen Filter geprüft und gesetzt (nehmen ihren Wert aus der URL -> GET)
-        if (isset($_GET['zustand'])) {
-            $zustandFilter = 'WHERE zustand = "' . $_GET['zustand'] . '"';
+        if (isset($_GET['geschlecht'])) {
+            $geschlecht = 'WHERE geschlecht = "' . $_GET['geschlecht'] . '"';
         }
-        if (isset($_GET['kategorie'])) {
-            $kategorie = 'WHERE kategorie = "' . $_GET['kategorie'] . '"';
-        }
-        if (isset($_GET['verfasser'])) {
-            $verfasser = 'WHERE verfasser = "' . $_GET['verfasser'] . '"';
+        if (isset($_GET['KpE'])) {
+            $KpE = 'WHERE Kontaktpermail = "' . $_GET['KpE'] . '"';
         }
         if (isset($_GET['search'])) {
             $search = htmlspecialchars(trim($_GET['search']));
-            $searchTA = 'WHERE vorname LIKE "%' . $search . '%" OR name LIKE "%' . $search . '%"';
+            $searchVN = 'WHERE vorname LIKE "%' . $search . '%" OR name LIKE "%' . $search . '%"';
         }
 
 
@@ -182,12 +173,10 @@
 
         // Datensätze auslesen 
         $select = $conn->prepare("SELECT `vorname`, `name`, `kid` 
-                                  FROM `kunden` 
-                                  $zustandFilter
-                                  $kategorie
-                                  $verfasser
-                                  $searchTA
-                                  $searchHome
+                                  FROM `kunden`
+                                  $geschlecht
+                                  $KpE
+                                  $searchVN
                                   ORDER BY $kollone $orderSort 
                                   LIMIT :versatz, :dseite");
         $select->bindValue(':versatz', $Versatz, PDO::PARAM_INT);
@@ -241,11 +230,8 @@
                 if (isset($_GET['sort'])) {
                     $urlErweiterung .= '&sort=' . $_GET['sort'];
                 }
-                if (isset($_GET['zustand'])) {
-                    $urlErweiterung .= '&zustand=' . $_GET['zustand'];
-                }
-                if (isset($_GET['kategorie'])) {
-                    $urlErweiterung .= '&kategorie=' . $_GET['kategorie'];
+                if (isset($_GET['geschlecht'])) {
+                    $urlErweiterung .= '&geschlecht=' . $_GET['geschlecht'];
                 }
                 if (isset($_GET['verfasser'])) {
                     $urlErweiterung .= '&verfasser=' . $_GET['verfasser'];
