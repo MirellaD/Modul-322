@@ -15,7 +15,6 @@
 
         // Funktion zum Schliessen des Popup-Fensters
         function closePopup(event) {
-            event.stopPropagation(); // Stoppt das Event-Bubbling (Ereignisverarbeitung, bei dem ein Ereignis, das an einem bestimmten Element ausgelöst wird, durch die Hierarchie seiner übergeordneten Elemente "aufblubbert" (aufsteigt), bis es das Wurzelelement erreicht.)
             document.getElementById('popup').style.display = 'none';
 
         }
@@ -26,7 +25,6 @@
         }
 
         function closeHinzufuegen(event) {
-            event.stopPropagation(); // Stoppt das Event-Bubbling (Ereignisverarbeitung, bei dem ein Ereignis, das an einem bestimmten Element ausgelöst wird, durch die Hierarchie seiner übergeordneten Elemente "aufblubbert" (aufsteigt), bis es das Wurzelelement erreicht.)
             document.getElementById('hinzufuegenPop').style.display = 'none';
 
         }
