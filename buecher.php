@@ -14,7 +14,7 @@
         }
 
         // Funktion zum Schliessen des Popup-Fensters
-        function closePopup(event) {
+        function closePopup() {
             document.getElementById('popup').style.display = 'none';
 
         }
@@ -24,7 +24,7 @@
 
         }
 
-        function closeHinzufuegen(event) {
+        function closeHinzufuegen() {
             document.getElementById('hinzufuegenPop').style.display = 'none';
 
         }
