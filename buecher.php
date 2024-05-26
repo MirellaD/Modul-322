@@ -14,7 +14,7 @@
         }
 
         // Funktion zum Schliessen des Popup-Fensters
-        function closePopup() {
+        function closePopup(event) {
             document.getElementById('popup').style.display = 'none';
 
         }
@@ -24,7 +24,7 @@
 
         }
 
-        function closeHinzufuegen() {
+        function closeHinzufuegen(event) {
             document.getElementById('hinzufuegenPop').style.display = 'none';
 
         }
@@ -133,9 +133,14 @@
             <label for="kurztitel">Titel:</label>
             <input type="text" name="kurztitel" id="kurztitel">
             <br>
+            <label for="autor">Autor:</label>
+            <input type="text" name="autor" id="autor">
+            <br>
             <label for="beschreibung">Beschreibung:</label>
             <input type="text" name="beschreibung" id="beschreibung">
-            input
+            <br>
+            <label for="nummer">Nummer:</label>
+            <input type="number" name="nummer" id="nummer">
             <br>
             <label for="zustandInsert">Zustand:</label>
             <select name="zustandInsert" id="zustandInsert">
@@ -145,6 +150,7 @@
             <option value="S">Schlecht</option>
             </select>
             <br>
+            katalog...................................................
             <label for="kategorieInsert">Kategorie:</label>
             <select name="kategorieInsert" id="kategorieInsert">
                 <option value="default">kategorien</option>
