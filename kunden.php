@@ -170,6 +170,16 @@
         // Den Versatz ermitteln 
         $Versatz = $AktuelleSeite * $DatensaetzeSeite - $DatensaetzeSeite;
 
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $KundeId = $_POST['id'];    
+            // SQL zum Löschen des Buches
+            $sql = "DELETE FROM kunden WHERE kid = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':id', $KundeId, PDO::PARAM_INT);
+            $stmt->execute(); 
+        }
+        
         // Datensätze auslesen 
         $select = $conn->prepare("SELECT `vorname`, `name`, `kid` 
                                   FROM `kunden`
@@ -190,6 +200,10 @@
                 echo '<div class="kundenEinzeln">';
                 echo '<em id="kundeV">' . $nachricht->vorname . '</em><br>' .
                     ' <em id="kundeN">' . $nachricht->name . '</em><br>';
+                echo '<form action="" method="post">';
+                echo '<input type="hidden" name="id" value="'. $nachricht->kid .'">';
+                echo '<button type="submit"><img src="Bilder/delete.svg" alt="Delete"></button>';
+                echo '</form>'; 
                 echo '</div>';
                 echo '<br>';
             }
