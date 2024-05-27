@@ -34,41 +34,41 @@ include('inc/inc.php');
         </form>
     </div>
 </div>
+
 <?php 
-    if(isset($_POST['newUser'])){ 
-        if ((trim($_POST['pass']))===(trim($_POST['passB']))){
-        $gleichPass = true;
-    }else{
-        $gleichPass = false;
-        echo"Eingegebene Passwörter stimmen nicht überein";
+if(isset($_POST['newUser'])){ 
+
+    if (trim($_POST['pass']) !== trim($_POST['passB'])) {
+        echo "Eingegebene Passwörter stimmen nicht überein";
         exit;
     }
+    if(strlen(trim($_POST['pass'])) >= 8){
+    $username = htmlspecialchars(trim($_POST['username']));
+    $name = htmlspecialchars(trim($_POST['name']));
+    $vorname= htmlspecialchars(trim($_POST['vorname']));
+    $pass = trim($_POST['pass']);
+    $mail = trim($_POST['email']);
+    $admin = isset($_POST['istadmin']);
+    $hashP = password_hash($pass, PASSWORD_DEFAULT);
 
-        if(strlen(trim($_POST['pass'])) >= 8 && $gleichPass = true){
-            $username = htmlspecialchars(trim($_POST['username']));
-            $name = htmlspecialchars(trim($_POST['name']));
-            $vorname= htmlspecialchars(trim($_POST['vorname']));
-            $pass = trim($_POST['pass']);
-            $mail = trim($_POST['email']);
-            $admin = isset($_POST['istadmin']);
-            $sql = "INSERT INTO benutzer (benutzername, name, vorname, passwort, email, admin) 
-            VALUES ('$username', '$name', '$vorname', '$pass', '$mail', $admin)";
+    $stmt = $conn->prepare("INSERT INTO benutzer (benutzername, name, vorname, passwort, email, admin) VALUES (?,?,?,?,?,?)");
+    $stmt->bindParam(1, $username);
+    $stmt->bindParam(2, $name);
+    $stmt->bindParam(3, $vorname);
+    $stmt->bindParam(4, $hashP);
+    $stmt->bindParam(5, $mail);
+    $stmt->bindParam(6, $admin);
 
-            if(isset($username) && isset($pass)){
-                $statement = $conn->prepare($sql);
-                $statement->execute();
-                echo "neuer Benutzer wurde hinzugefügt";
-            }
-        }
-        else{
-            echo "Passwort muss min. 8 Zeichen lang sein";
-            exit;
-        }
-    }else{
-        exit;
+    if ($stmt->execute()) {
+        echo "neuer Benutzer wurde hinzugefügt";
+    } else {
+        echo "Fehler beim Hinzufügen des Benutzers";
     }
+}else{
+    echo "Passwort muss mindestens 8 Zeichen lang sein";
+}}
 ?>
 
-    <?php include ('inc/footer.php')?>        
+<?php include ('inc/footer.php')?>        
 </body>
 </html>
