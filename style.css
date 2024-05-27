@@ -368,6 +368,18 @@ iframe {
   margin-top: -50vh;
 }
 
+#passform{
+  background-color: white;
+  padding-left: 5%;
+  padding-right: 5%;
+  display: inline-block;
+}
+
+#newUser{
+  background-color: white;
+  text-align: center;
+}
+
 .blättern {
   text-align: center;
   margin: 0 auto;

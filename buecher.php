@@ -150,7 +150,7 @@
             <option value="S">Schlecht</option>
             </select>
             <br>
-            katalog...................................................
+            katalog............................................
             <label for="kategorieInsert">Kategorie:</label>
             <select name="kategorieInsert" id="kategorieInsert">
                 <option value="default">kategorien</option>
