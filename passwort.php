@@ -35,19 +35,10 @@ if(isset($_POST['changePS'])){
         if ($benutzer && password_verify($passAlt, $benutzer['passwort'])){ 
             if ($passNeu === $passNB){
                 $passHash = password_hash($passNeu, PASSWORD_DEFAULT); 
-                $sqlUpdate = "UPDATE benutzer SET passwort = :passHash WHERE benutzername = :username AND passwort = :passAlt"; 
+                $sqlUpdate = "UPDATE benutzer SET passwort = '"."$passHash" . "' WHERE benutzername = '". "$username"."'"; 
                 $stmt = $conn->prepare($sqlUpdate);
-                $stmt->bindValue(':passHash', $passHash, PDO::PARAM_STR);
-                $stmt->bindValue(':username', $username, PDO::PARAM_STR);
-                $stmt->bindValue(':passAlt', $passAlt, PDO::PARAM_STR);
                 $stmt->execute();
-
-                $updatedUser = $conn->query("SELECT * FROM benutzer WHERE benutzername = '$username'")->fetch();
-                if ($updatedUser['passwort']!== $passHash) {
-                    echo "Fehler: Das Passwort konnte nicht erfolgreich geändert werden.";
-                } else {
-                    echo "Passwort wurde erfolgreich geändert!";
-                }
+                echo "Passwort wurde erfolgreich geändert!";
             }else{
                 echo "<div class='error'>";
                 echo($error);
