@@ -49,7 +49,10 @@
         </p>
     </div>
     <!--der Footer wird hinzugefügt (bei den anderen Seiten wurde dies auch gemacht)-->
-    <?php include('inc/footer.php') ?>
+    <div>
+        <?php include('inc/footer.php') ?>
+    </div>
+    
 </body>
 
 </html>

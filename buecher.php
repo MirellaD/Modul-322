@@ -14,7 +14,7 @@
         }
 
         // Funktion zum Schliessen des Popup-Fensters
-        function closePopup(event) {
+        function closePopup() {
             document.getElementById('popup').style.display = 'none';
 
         }
@@ -24,7 +24,7 @@
 
         }
 
-        function closeHinzufuegen(event) {
+        function closeHinzufuegen() {
             document.getElementById('hinzufuegenPop').style.display = 'none';
 
         }
@@ -116,7 +116,7 @@
             <br>
             <div class="allFilter">
                 <!--löst beim klicken des buttons die javascript funktion closePopup() aus und schliesst das Popup-->
-                <input type="button" name="schliessen" onclick="closePopup(event)" value="Schliessen">
+                <input type="button" name="schliessen" onclick="closePopup()" value="Schliessen">
             </div>
 
         </div>
@@ -126,67 +126,81 @@
                 <input id="searchbar" class="btns" type="search" placeholder="Buch oder Autor suchen..." onkeypress="if(event.keyCode === 13) searchResultat();">
         </div>
         <br>
+
+        <?php 
+        if (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == true) { ?>
         <button class="btns" id="popbutton" onclick="openHinzufuegen()">Hinzufügen</button>
         <div id="hinzufuegenPop" class="popup">
-            <h2>Buch hinzufügen</h2>
+        <h2>Buch hinzufügen</h2>
 
-            <label for="kurztitel">Titel:</label>
-            <input type="text" name="kurztitel" id="kurztitel">
-            <br>
-            <label for="autor">Autor:</label>
-            <input type="text" name="autor" id="autor">
-            <br>
-            <label for="beschreibung">Beschreibung:</label>
-            <input type="text" name="beschreibung" id="beschreibung">
-            <br>
-            <label for="nummer">Nummer:</label>
-            <input type="number" name="nummer" id="nummer">
-            <br>
-            <label for="zustandInsert">Zustand:</label>
-            <select name="zustandInsert" id="zustandInsert">
-            <option value="default">Zustand</option>
-            <option value="G">Gut</option>
-            <option value="M">Mittel</option>
-            <option value="S">Schlecht</option>
-            </select>
-            <br>
-            katalog............................................
-            <label for="kategorieInsert">Kategorie:</label>
-            <select name="kategorieInsert" id="kategorieInsert">
-                <option value="default">kategorien</option>
-                <option value="1">Alte Drucke, Bibeln, Klassische Autoren</option>
-                <option value="2">Geographie und Reisen</option>
-                <option value="3">Geschichtswissenschaften</option>
-                <option value="4">Naturwissenschaften</option>
-                <option value="5">Kinderbücher</option>
-                <option value="6">Moderne Literatur und Kunst</option>
-                <option value="7">Moderne Kunst und Künstlergraphik</option>
-                <option value="8">Kunstwissenschaften</option>
-                <option value="9">Architektur</option>
-                <option value="10">Technik</option>
-                <option value="11">Naturwissenschaften - Medizin</option>
-                <option value="12">Ozeanien</option>
-                <option value="13">Afrika</option>
-            </select>
-            <br>
-            <label for="verfasInsert">Verfasser:</label>
-            <select name="verfasInsert" id="verfasInsert">
-                <option value="default">Verfasser</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-            </select>
-            <br>
-            <div class="allFilter">
-                <!--löst beim klicken des buttons die javascript funktion closePopup() aus und schliesst das Popup-->
-                <input type="button" name="schliessen" onclick="closeHinzufuegen(event)" value="Schliessen">
-            </div>
-        </div>
+        <form action="buecher.php" method="post">
+        <label for="kurztitel">Titel*:</label>
+        <input type="text" name="kurztitel" id="kurztitel">
+        <br>
+        <label for="autor">Autor*:</label>
+        <input type="text" name="autor" id="autor">
+        <br>
+        <label for="beschreibung">Beschreibung:</label>
+        <textarea id="beschreibung" name="beschreibung" rows="4" cols="50"></textarea>
+        <br>
+        <label for="nummer">Nummer*:</label>
+        <input type="number" name="nummer" id="nummer">
+        <br>
+        <label for="bookimage">Bild des Buches hochladen:</label>
+        <input type="file" name="bookimage" value="bookimage" />
+        <br>
+    <label for="katalog">Katalog*:</label>
+    <input type="number" name="katalog" id="katalog">
+    <br>
+    <label for="kategorieInsert">Kategorie*:</label>
+    <select name="kategorieInsert" id="kategorieInsert">
+        <option value="default">kategorien</option>
+        <option value="1">Alte Drucke, Bibeln, Klassische Autoren</option>
+        <option value="2">Geographie und Reisen</option>
+        <option value="3">Geschichtswissenschaften</option>
+        <option value="4">Naturwissenschaften</option>
+        <option value="5">Kinderbücher</option>
+        <option value="6">Moderne Literatur und Kunst</option>
+        <option value="7">Moderne Kunst und Künstlergraphik</option>
+        <option value="8">Kunstwissenschaften</option>
+        <option value="9">Architektur</option>
+        <option value="10">Technik</option>
+        <option value="11">Naturwissenschaften - Medizin</option>
+        <option value="12">Ozeanien</option>
+        <option value="13">Afrika</option>
+    </select>
+    <br>
+    <label for="verfasInsert">Verfasser:</label>
+    <select name="verfasInsert" id="verfasInsert">
+        <option value="default">Verfasser</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+    </select>
+    <br>
+    <label for="zustandInsert">Zustand:</label>
+    <select name="zustandInsert" id="zustandInsert">
+    <option value="default">Zustand</option>
+    <option value="G">Gut</option>
+    <option value="M">Mittel</option>
+    <option value="S">Schlecht</option>
+    </select>
+    <br>
+    <div class="allFilter">
+        <input type="submit" name="update "value="Buch hinzufügen">
+        </form>
+        <!--löst beim klicken des buttons die javascript funktion closePopup() aus und schliesst das Popup-->
+        <input type="button" name="schliessen" onclick="closeHinzufuegen()" value="Schliessen">
+    </div>
+</div>
+<?php } ?>
 
         <?php
+
+        if (isset($_POST[]))
         // Standard Sortierreihenfolge
         $kollone = 'id';
         $orderSort = 'ASC';
@@ -314,10 +328,12 @@
             echo '<div class="buchliste">';
             $reiheZahl = 0;
             foreach ($nachrichten as $nachricht) {
+                $kurztitel = $nachricht->kurztitle;
+                $autor = $nachricht->autor;
                 echo '<div class="flex">';
                 echo '<a href="buchdetail.php?id=' . $nachricht->id . '"class="BildBuch"><img src="Bilder/book-cover.svg" alt="Bild' . $nachricht->kurztitle . '" class="small-svg"></a> <br>';
-                echo '<em id="buchtitel">' . $nachricht->kurztitle . '</em><br>' .
-                    ' <em id="buchautor">' . $nachricht->autor . '</em><br>';
+                echo '<em id="buchtitel">' . substr($kurztitel, 0, 23) . '</em><br>' .
+                    ' <em id="buchautor">' . substr($autor, 0, 25) . '</em><br>';
                 if (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == true) {
                     echo '<form action="buecher.php" method="post">';
                     echo '<input type="hidden" name="id" value="'. $nachricht->id .'">';
@@ -342,8 +358,6 @@
         }
 
         echo '</div>';
-
-
             //Formular und Blätterfunktion
             echo '<form class="blättern" method="GET" autocomplete="off">' .
             (($AktuelleSeite - 1) > 0 ?
@@ -398,9 +412,33 @@
                 return $urlErweiterung;
             }
 
+
         include('inc/footer.php');
         ?>
 
 </body>
 
 </html>
+<?php
+/* 
+        echo '<button class="btns" id="popbutton" onclick="openHinzufuegen()">Hinzufügen</button>';
+        echo '<div id="hinzufuegenPop" class="popup">';
+        echo '<h2>Buch hinzufügen</h2>';
+
+        echo '<label for="kurztitel">Titel*:</label>';
+        echo '<input type="text" name="kurztitel" id="kurztitel">';
+        echo '<br>';
+        echo '<label for="autor">Autor*:</label>';
+        echo '<input type="text" name="autor" id="autor">';
+        echo '<br>';
+        echo '<label for="beschreibung">Beschreibung:</label>';
+        echo '<textarea id="beschreibung" name="beschreibung" rows="4" cols="50"></textarea>';
+        echo '<br>';
+        echo '<label for="nummer">Nummer*:</label>';
+        echo '<input type="number" name="nummer" id="nummer">';
+        echo '<br>';
+        echo '<label for="bookimage">Bild des Buches hochladen:</label>';
+        echo '<input type="file" name="bookimage" value="bookimage" />';
+        echo '<br>';
+
+        */?>

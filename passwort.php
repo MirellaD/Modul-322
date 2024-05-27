@@ -8,21 +8,24 @@
 <body>
 <?php include ('inc/navigation.php') ?>
 <?php include ('inc/inc.php');?>
-<div id="passform">
-    <h2>Passwort ändern</h2>
-    <form action="passwort.php" method="post"> 
-        <label for="username">Benutzername:</label><br>
-        <input type="text" id="username" name="username" required/><br><br>
-        <label for="passA">Altes Passwort:</label><br>
-        <input type="password" id="passA" name="passA" required/><br><br>
-        <label for="passN">Neues Passwort:</label><br>
-        <input type="password" id="passN" name="passN" required/><br><br>
-        <label for="passNB">Neues Passwort bestätigen:</label><br>
-        <input type="password" id="passNB" name="passNB" required/><br><br>
-        <input id="logbutton" name="changePS" type="submit" value="Passwort ändern"><br><br>
-    </form>
+<div id="grosspassform">
+    <div id="passform">
+        <h2>Passwort ändern</h2>
+        <form action="passwort.php" method="post"> 
+            <label for="username">Benutzername:</label><br>
+            <input type="text" id="username" name="username" required/><br><br>
+            <label for="passA">Altes Passwort:</label><br>
+            <input type="password" id="passA" name="passA" required/><br><br>
+            <label for="passN">Neues Passwort:</label><br>
+            <input type="password" id="passN" name="passN" required/><br><br>
+            <label for="passNB">Neues Passwort bestätigen:</label><br>
+            <input type="password" id="passNB" name="passNB" required/><br><br>
+            <input id="logbutton" name="changePS" type="submit" value="Passwort ändern"><br><br>
+        </form>
+    </div>
 </div>
 <?php
+echo "<div class='messagesPass'>";
 if(isset($_POST['changePS'])){ 
     if(strlen(trim($_POST['passNB'])) >= 8){
         $error = "Fehler: Überprüfen Sie Ihre Angaben.";
@@ -56,6 +59,7 @@ if(isset($_POST['changePS'])){
         echo "Das neue Passwort muss eine Zeichenlänge von 8 haben.";
     }
 }
+echo "</div>";
 ?>
 <?php include ('inc/footer.php') ?>
 </body>
