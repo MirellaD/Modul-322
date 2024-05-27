@@ -135,25 +135,25 @@
 
         <form action="buecher.php" method="post">
         <label for="kurztitel">Titel*:</label>
-        <input type="text" name="kurztitel" id="kurztitel">
+        <input type="text" name="kurztitel" id="kurztitel" required>
         <br>
         <label for="autor">Autor*:</label>
-        <input type="text" name="autor" id="autor">
+        <input type="text" name="autor" id="autor" required>
         <br>
         <label for="beschreibung">Beschreibung:</label>
         <textarea id="beschreibung" name="beschreibung" rows="4" cols="50"></textarea>
         <br>
         <label for="nummer">Nummer*:</label>
-        <input type="number" name="nummer" id="nummer">
+        <input type="number" name="nummer" id="nummer" min="0" required>
         <br>
         <label for="bookimage">Bild des Buches hochladen:</label>
-        <input type="file" name="bookimage" value="bookimage" />
+        <input type="file" name="bookimage" />
         <br>
     <label for="katalog">Katalog*:</label>
-    <input type="number" name="katalog" id="katalog">
+    <input type="number" name="katalog" id="katalog" min="0" required>
     <br>
     <label for="kategorieInsert">Kategorie*:</label>
-    <select name="kategorieInsert" id="kategorieInsert">
+    <select name="kategorieInsert" id="kategorieInsert" required>
         <option value="default">kategorien</option>
         <option value="1">Alte Drucke, Bibeln, Klassische Autoren</option>
         <option value="2">Geographie und Reisen</option>
@@ -190,7 +190,7 @@
     </select>
     <br>
     <div class="allFilter">
-        <input type="submit" name="update "value="Buch hinzufügen">
+        <input type="submit" name="submitBook" value="Buch hinzufügen">
         </form>
         <!--löst beim klicken des buttons die javascript funktion closePopup() aus und schliesst das Popup-->
         <input type="button" name="schliessen" onclick="closeHinzufuegen()" value="Schliessen">
@@ -200,7 +200,68 @@
 
         <?php
 
-        if (isset($_POST[]))
+        if (isset($_POST['submitBook'])){
+            
+            $kurztitel = trim($_POST['kurztitel']);
+            $autor = trim($_POST['autor']);
+            $beschreibung = trim($_POST['beschreibung']);
+            $nummer = trim($_POST['nummer']);
+            $bild = trim($_POST['bookimage']);
+            $katalog = trim($_POST['katalog']);
+            $kategorieInsert = trim($_POST['kategorieInsert']);
+            $verfasInsert = trim($_POST['verfasInsert']);
+            $zustandInsert = trim($_POST['zustandInsert']);
+
+            $errors = [];
+
+            if (empty($kurztitel)) $errors[] = "Kurztitel ist erforderlich.";
+            if (empty($autor)) $errors[] = "Autor ist erforderlich.";
+            if (empty($nummer)) {
+                $errors[] = "Nummer ist erforderlich.";
+            } elseif (!is_numeric($nummer) || $nummer <= 0) {
+                $errors[] = "Nummer muss eine positive Zahl sein.";
+            }
+            if (empty($katalog)) {
+                $errors[] = "Katalog ist erforderlich.";
+            } elseif (!is_numeric($katalog) || $katalog <= 0) {
+                $errors[] = "Katalog muss eine positive Zahl sein.";
+            }
+            if ($kategorieInsert === "default") $errors[] = "Kategorie ist erforderlich.";
+
+            $imageInfo = getimagesize($bild['tmp_name']);
+            if ($imageInfo === false) {
+                $errors[] = "Die hochgeladene Datei ist kein Bild.";
+            } elseif (!in_array($imageInfo[2], [IMAGETYPE_JPEG, IMAGETYPE_PNG])) {
+                $errors[] = "Das Bild muss im JPEG- oder PNG-Format sein.";
+            }
+
+            if (count($errors) === 0) {
+
+                $stmt = $conn->prepare("INSERT INTO buecher (kurztitel, autor, beschreibung, nummer, katalog, kategorie, verfasser, zustand, bild)
+                                        VALUES (:kurztitel, :autor, :beschreibung, :nummer, :katalog, :kategorieInsert, :verfasInsert, :zustandInsert, :bild)");
+                $stmt->bindParam(':kurztitel', $kurztitel);
+                $stmt->bindParam(':autor', $autor);
+                $stmt->bindParam(':beschreibung', $beschreibung);
+                $stmt->bindParam(':nummer', $nummer);
+                $stmt->bindParam(':katalog', $katalog);
+                $stmt->bindParam(':kategorieInsert', $kategorieInsert);
+                $stmt->bindParam(':verfasInsert', $verfasInsert);
+                $stmt->bindParam(':zustandInsert', $zustandInsert);
+
+                // Bild hochladen und Pfad speichern
+                $bildPfad = 'Bilder/' . basename($bild['name']);
+                move_uploaded_file($bild['tmp_name'], $bildPfad);
+                $stmt->bindParam(':bild', $bildPfad);
+
+                $stmt->execute();
+                echo "Buch erfolgreich hinzugefügt!";
+            } else {
+                foreach ($errors as $error) {
+                    echo "<p class='error'>$error</p> <br>";
+                }
+            }
+
+        }
         // Standard Sortierreihenfolge
         $kollone = 'id';
         $orderSort = 'ASC';
@@ -308,6 +369,15 @@
         // Den Versatz ermitteln 
         $Versatz = $AktuelleSeite * $DatensaetzeSeite - $DatensaetzeSeite;
 
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $buchId = $_POST['id'];    
+            // SQL zum Löschen des Buches
+            $sql = "DELETE FROM buecher WHERE id = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':id', $buchId, PDO::PARAM_INT);
+            $stmt->execute(); 
+        }
+        
         // Datensätze auslesen 
         $select = $conn->prepare("SELECT `kurztitle`, `autor`, `id` 
                                   FROM `buecher` 
@@ -346,15 +416,6 @@
                     echo '<br>';
                 }
             }
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $buchId = $_POST['id'];    
-            // SQL zum Löschen des Buches
-            $sql = "DELETE FROM buecher WHERE id = :id";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindValue(':id', $buchId, PDO::PARAM_INT);
-            $stmt->execute(); 
         }
 
         echo '</div>';
