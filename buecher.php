@@ -232,17 +232,17 @@
             }
             if ($kategorieInsert === "default") $errors[] = "Kategorie ist erforderlich.";
 
-            $imageInfo = getimagesize($bild['tmp_name']);
+            $imageInfo = isset($bild['tmp_name']) ? getimagesize($bild['tmp_name']) : false;
             if ($imageInfo === false) {
                 $errors[] = "Die hochgeladene Datei ist kein Bild.";
-            } elseif (!in_array($imageInfo[2], [IMAGETYPE_JPEG, IMAGETYPE_PNG])) {
+            } elseif ($imageInfo['mime'] == image_type_to_mime_type(IMAGETYPE_JPEG) || $imageInfo['mime'] == image_type_to_mime_type(IMAGETYPE_PNG)) {
                 $errors[] = "Das Bild muss im JPEG- oder PNG-Format sein.";
             }
 
             if (count($errors) === 0) {
 
-                $stmt = $conn->prepare("INSERT INTO buecher (kurztitle, autor, title, nummer, katalog, kategorie, verfasser, zustand, foto)
-                                        VALUES (:kurztitel, :autor, :beschreibung, :nummer, :katalog, :kategorieInsert, :verfasInsert, :zustandInsert, :bild)");
+                $stmt = $conn->prepare("INSERT INTO buecher (kurztitle, autor, title, nummer, katalog, kategorie, verfasser, zustand)
+                                        VALUES (:kurztitel, :autor, :beschreibung, :nummer, :katalog, :kategorieInsert, :verfasInsert, :zustandInsert)");
                 $stmt->bindParam(':kurztitel', $kurztitel);
                 $stmt->bindParam(':autor', $autor);
                 $stmt->bindParam(':beschreibung', $beschreibung);
@@ -374,7 +374,7 @@
         $Versatz = $AktuelleSeite * $DatensaetzeSeite - $DatensaetzeSeite;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $buchId = $_POST['id'];    
+            $buchId = isset($_POST['id']);    
             // SQL zum Löschen des Buches
             $sql = "DELETE FROM buecher WHERE id = :id";
             $stmt = $conn->prepare($sql);

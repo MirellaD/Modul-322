@@ -314,7 +314,8 @@ iframe {
   top: 175px;
   left: 21vw;
   transform: translate(-50%, -50%);
-  width: 25vw;
+  max-width: fit-content;
+  max-height: fit-content;
   height: calc(7em + 2%);
   padding: 2vw;
   background-color: #faf7f0;
