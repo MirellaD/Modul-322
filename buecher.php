@@ -212,6 +212,10 @@
             $verfasInsert = trim($_POST['verfasInsert']);
             $zustandInsert = trim($_POST['zustandInsert']);
 
+            if (empty($bild)){
+                $bild = "book.jpg";
+            }
+
             $errors = [];
 
             if (empty($kurztitel)) $errors[] = "Kurztitel ist erforderlich.";
@@ -237,7 +241,7 @@
 
             if (count($errors) === 0) {
 
-                $stmt = $conn->prepare("INSERT INTO buecher (kurztitel, autor, beschreibung, nummer, katalog, kategorie, verfasser, zustand, bild)
+                $stmt = $conn->prepare("INSERT INTO buecher (kurztitle, autor, title, nummer, katalog, kategorie, verfasser, zustand, foto)
                                         VALUES (:kurztitel, :autor, :beschreibung, :nummer, :katalog, :kategorieInsert, :verfasInsert, :zustandInsert, :bild)");
                 $stmt->bindParam(':kurztitel', $kurztitel);
                 $stmt->bindParam(':autor', $autor);
