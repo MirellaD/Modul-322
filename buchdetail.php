@@ -61,6 +61,14 @@
             echo '<input type="text" name="kurztitle" value="' . htmlspecialchars($buch['kurztitle']) . '">';
             echo '<label>Autor:</label>';
             echo '<input type="text" name="autor" value="' . htmlspecialchars($buch['autor']) . '">';
+            echo '<label>Beschreibung:</label>';
+            echo ' <textarea id="beschreibung" name="beschreibung" rows="4" cols="50">'. htmlspecialchars($buch['title']).'</textarea>';
+            echo '<label>Nummer:</label>';
+            echo '<input type="number" name="nummer" id="nummer" min="0" value="'. htmlspecialchars($buch['nummer']) .'">';
+            echo '<label>Bild:</label>';
+            echo '<input type="file" name="bookimage" />';
+            echo '<label>Katalog:</label>';
+            echo '<input type="number" name="katalog" id="katalog" min="0" value="'. htmlspecialchars($buch['katalog']) .'">';
             echo '<input type="submit" value="Update">';
             echo '</form>';
             }
