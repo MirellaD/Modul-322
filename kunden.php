@@ -93,6 +93,27 @@
         </div>
         <br>
 
+        <div>
+            <form action="kunden.php" method="post">
+                <h2>Kunde hinzufügen</h2>
+                <label for="vorname">Vorname*:</label>
+                <input type="text" name="vorname" id="vorname">
+                <br>
+                <label for="nachname">Nachname*:</label>
+                <input type="text" name="nachname" id="nachname">
+                <br>
+                <label for="email">Email*:</label>
+                <input type="email" name="email" id="email">
+                <br>
+                <label for="gebu">Geburtstag:</label>
+                <input type="date" name="gebu" id="gebu">
+                <br>
+                <label for="geschlecht">Geschlecht:</label>
+                inp
+            </form>
+        </div>
+
+
         <?php
         // Standard Sortierreihenfolge
         $kollone = 'kid';

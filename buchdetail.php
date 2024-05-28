@@ -15,11 +15,6 @@
     <?php include('inc/navigation.php');
      include('inc/inc.php'); ?>
 
-    <br>
-    <div class='detailbild'>
-    <a id="zuruck" href="buecher.php"> < zurück</a>
-    <img src="Bilder/book-cover.svg" alt="buchbild">
-    </div>
     <?php
 
     // Sicherstellen, dass die Buch-ID gesetzt ist
@@ -33,10 +28,22 @@
         $buchQuery->execute();
         $buch = $buchQuery->fetch(PDO::FETCH_ASSOC);
 
+        echo print_r($buch);
+
+        echo '<br>';
+        echo '<div class="detailbild">';
+        echo '<a id="zuruck" href="buecher.php"> < zurück</a>';
+        if ($buch['foto'] === "book.jpg"){
+            echo '<img src="Bilder/book-cover.svg" alt="buchbild">';
+        } else {
+            echo '<img src="'. $buch['foto'] .'" alt="buchbild">';
+        }
+        echo '</div>';
+        
         if (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == true) {
             echo '<form action="buchdetail.php" method="post">';
             echo '<input type="hidden" name="id" value="'. $buchID .'">';
-            echo '<button type="submit"><img src="Bilder/delete.svg" alt="Delete"></button>';
+            echo '<button type="submit">update</button>';
             echo '</form>';
         }
 
@@ -75,7 +82,6 @@
         }
     }
 
-    // Überprüfen, ob das Formular abgesendet wurde
 
     ?>
 

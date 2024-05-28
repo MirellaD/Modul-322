@@ -200,76 +200,6 @@
 
         <?php
 
-        if (isset($_POST['submitBook'])){
-            
-            $kurztitel = trim($_POST['kurztitel']);
-            $autor = trim($_POST['autor']);
-            $beschreibung = trim($_POST['beschreibung']);
-            $nummer = trim($_POST['nummer']);
-            $bild = trim($_POST['bookimage']);
-            $katalog = trim($_POST['katalog']);
-            $kategorieInsert = trim($_POST['kategorieInsert']);
-            $verfasInsert = trim($_POST['verfasInsert']);
-            $zustandInsert = trim($_POST['zustandInsert']);
-
-            $errors = [];
-
-            if (empty($kurztitel)) $errors[] = "Kurztitel ist erforderlich.";
-            if (empty($autor)) $errors[] = "Autor ist erforderlich.";
-            if (empty($nummer)) {
-                $errors[] = "Nummer ist erforderlich.";
-            } elseif (!is_numeric($nummer) || $nummer <= 0) {
-                $errors[] = "Nummer muss eine positive Zahl sein.";
-            }
-            if (empty($katalog)) {
-                $errors[] = "Katalog ist erforderlich.";
-            } elseif (!is_numeric($katalog) || $katalog <= 0) {
-                $errors[] = "Katalog muss eine positive Zahl sein.";
-            }
-            if ($kategorieInsert === "default") $errors[] = "Kategorie ist erforderlich.";
-
-            if (!empty($bild)){
-            $imageInfo = isset($bild['tmp_name']) ? getimagesize($bild['tmp_name']) : false;
-            if ($imageInfo === false) {
-                $errors[] = "Die hochgeladene Datei ist kein Bild.";
-            } elseif ($imageInfo['mime'] == image_type_to_mime_type(IMAGETYPE_JPEG) || $imageInfo['mime'] == image_type_to_mime_type(IMAGETYPE_PNG)) {
-                $errors[] = "Das Bild muss im JPEG- oder PNG-Format sein.";
-            }}
-            if (empty($bild)){
-                $bild = "book.jpg";
-            }
-
-            if (count($errors) === 0) {
-
-                // Bild hochladen und Pfad speichern
-                if ($bild !== "book.jpg"){
-                    $bildPfad = 'Bilder/'. basename($bild);
-                    move_uploaded_file($bild, $bildPfad);
-                } else {
-                    $bildPfad = $bild;
-                }
-
-                $stmt = $conn->prepare("INSERT INTO buecher (kurztitle, autor, title, nummer, katalog, kategorie, verfasser, zustand, foto)
-                                        VALUES (:kurztitel, :autor, :beschreibung, :nummer, :katalog, :kategorieInsert, :verfasInsert, :zustandInsert, :bild)");
-                $stmt->bindParam(':kurztitel', $kurztitel);
-                $stmt->bindParam(':autor', $autor);
-                $stmt->bindParam(':beschreibung', $beschreibung);
-                $stmt->bindParam(':nummer', $nummer);
-                $stmt->bindParam(':katalog', $katalog);
-                $stmt->bindParam(':kategorieInsert', $kategorieInsert);
-                $stmt->bindParam(':verfasInsert', $verfasInsert);
-                $stmt->bindParam(':zustandInsert', $zustandInsert);
-                $stmt->bindParam(':bild', $bildPfad);
-
-                $stmt->execute();
-                echo "Buch erfolgreich hinzugefügt!";
-            } else {
-                foreach ($errors as $error) {
-                    echo "<p class='error'>$error</p> <br>";
-                }
-            }
-
-        }
         // Standard Sortierreihenfolge
         $kollone = 'id';
         $orderSort = 'ASC';
@@ -345,6 +275,91 @@
             }
         }
 
+        
+        if (isset($_POST['submitBook'])){
+            
+            $kurztitel = trim($_POST['kurztitel']);
+            $autor = trim($_POST['autor']);
+            $beschreibung = trim($_POST['beschreibung']);
+            $nummer = trim($_POST['nummer']);
+            $katalog = trim($_POST['katalog']);
+            $kategorieInsert = trim($_POST['kategorieInsert']);
+            $verfasInsert = trim($_POST['verfasInsert']);
+            $zustandInsert = trim($_POST['zustandInsert']);
+
+            $errors = [];
+
+            if (empty($kurztitel)) $errors[] = "Kurztitel ist erforderlich.";
+            if (empty($autor)) $errors[] = "Autor ist erforderlich.";
+            if (empty($nummer)) {
+                $errors[] = "Nummer ist erforderlich.";
+            } elseif (!is_numeric($nummer) || $nummer <= 0) {
+                $errors[] = "Nummer muss eine positive Zahl sein.";
+            }
+            if (empty($katalog)) {
+                $errors[] = "Katalog ist erforderlich.";
+            } elseif (!is_numeric($katalog) || $katalog <= 0) {
+                $errors[] = "Katalog muss eine positive Zahl sein.";
+            }
+            if ($kategorieInsert === "default") $errors[] = "Kategorie ist erforderlich.";
+
+            function checkFileExtension($ext) {
+                if ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'png') {
+                    $pass = 1;
+                } else {
+                    $pass = 0;
+                }
+               return $pass;
+            }
+            $fileNameComplete = "book.jpg"; // Default image
+            if (isset($_FILES["file"])) {
+        
+                $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+                $fileAccepted = checkFileExtension($ext);
+                $fileSize = $_FILES['file']['size'];
+        
+                if ($fileAccepted && $fileSize <= 8388608) {
+                    $uploadFileName = $_FILES['file']['name'];
+                    $fileName = strtok($uploadFileName, ".");
+                    $fileNameShortened = substr($fileName, 0, 20);
+                    $fileNameFinalized = str_replace(' ', '_', $fileNameShortened);
+                    $fileNameComplete = $fileNameFinalized . '.' . $ext;
+                    $dest = __DIR__ . 'Bilder/' . $fileNameComplete;
+        
+                    if (!move_uploaded_file($_FILES['file']['tmp_name'], $dest)) {
+                        $errors[] = "Failed to move uploaded file.";
+                    }
+                } else {
+                    $errors[] = "File not accepted or too large.";
+                }
+            } elseif (isset($_FILES['file']) && $_FILES['file']['error'] !== UPLOAD_ERR_NO_FILE) {
+                $errors[] = "File upload error: " . $_FILES['file']['error'];
+            };
+
+            if (count($errors) === 0) {
+
+                $stmt = $conn->prepare("INSERT INTO buecher (kurztitle, autor, title, nummer, katalog, kategorie, verfasser, zustand, foto)
+                                        VALUES (:kurztitel, :autor, :beschreibung, :nummer, :katalog, :kategorieInsert, :verfasInsert, :zustandInsert, :bild)");
+                $stmt->bindParam(':kurztitel', $kurztitel);
+                $stmt->bindParam(':autor', $autor);
+                $stmt->bindParam(':beschreibung', $beschreibung);
+                $stmt->bindParam(':nummer', $nummer);
+                $stmt->bindParam(':katalog', $katalog);
+                $stmt->bindParam(':kategorieInsert', $kategorieInsert);
+                $stmt->bindParam(':verfasInsert', $verfasInsert);
+                $stmt->bindParam(':zustandInsert', $zustandInsert);
+                $stmt->bindParam(':bild', $fileNameComplete);
+
+                $stmt->execute();
+                echo "Buch erfolgreich hinzugefügt!";
+            } else {
+                foreach ($errors as $error) {
+                    echo "<p class='error'>$error</p> <br>";
+                }
+            }
+
+        }
+        
         // Anzeige der Datensätze pro Seite 
         $DatensaetzeSeite = 18;
 
@@ -400,6 +415,7 @@
         $select->bindValue(':dseite', $DatensaetzeSeite, PDO::PARAM_INT);
         $select->execute();
         $nachrichten = $select->fetchAll(PDO::FETCH_OBJ);
+        var_dump($nachrichten);
 
         // Ausgabe über eine Foreach-Schleife 
         if ($AnzahlDatensaetze > 0) {
@@ -411,14 +427,14 @@
                 echo '<div class="flex">';
                 if ($nachricht->foto === "book.jpg"){
                 echo '<a href="buchdetail.php?id=' . $nachricht->id . '"class="BildBuch"><img src="Bilder/book-cover.svg" alt="Bild' . $nachricht->kurztitle . '" class="small-svg"></a> <br>';
-                } else {echo '<a href="buchdetail.php?id=' . $nachricht->id . '"class="BildBuch"><img src="'. $nachricht->foto .'" alt="Bild: ' . $nachricht->kurztitle . '" class="small-svg"></a> <br>';}   
+                } else {echo '<a href="buchdetail.php?id=' . $nachricht->id . '"class="BildBuch"><img src=Bilder/"'. $nachricht->foto .'" alt="Bild: ' . $nachricht->kurztitle . '" class="small-svg"></a> <br>';}   
                 echo '<em id="buchtitel">' . substr($kurztitel, 0, 23) . '</em><br>' .
                     ' <em id="buchautor">' . substr($autor, 0, 25) . '</em><br>';
                 if (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == true) {
                     echo '<form action="buecher.php" method="post">';
                     echo '<input type="hidden" name="id" value="'. $nachricht->id .'">';
                     echo '<button type="submit"><img src="Bilder/delete.svg" alt="Delete"></button>';
-                    echo '</form>'; 
+                    echo '</form>';
                 }
                 echo '</div>';
                 $reiheZahl += 1;
@@ -490,26 +506,4 @@
 </body>
 
 </html>
-<?php
-/* 
-        echo '<button class="btns" id="popbutton" onclick="openHinzufuegen()">Hinzufügen</button>';
-        echo '<div id="hinzufuegenPop" class="popup">';
-        echo '<h2>Buch hinzufügen</h2>';
 
-        echo '<label for="kurztitel">Titel*:</label>';
-        echo '<input type="text" name="kurztitel" id="kurztitel">';
-        echo '<br>';
-        echo '<label for="autor">Autor*:</label>';
-        echo '<input type="text" name="autor" id="autor">';
-        echo '<br>';
-        echo '<label for="beschreibung">Beschreibung:</label>';
-        echo '<textarea id="beschreibung" name="beschreibung" rows="4" cols="50"></textarea>';
-        echo '<br>';
-        echo '<label for="nummer">Nummer*:</label>';
-        echo '<input type="number" name="nummer" id="nummer">';
-        echo '<br>';
-        echo '<label for="bookimage">Bild des Buches hochladen:</label>';
-        echo '<input type="file" name="bookimage" value="bookimage" />';
-        echo '<br>';
-
-        */?>
