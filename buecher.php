@@ -212,10 +212,6 @@
             $verfasInsert = trim($_POST['verfasInsert']);
             $zustandInsert = trim($_POST['zustandInsert']);
 
-            if (empty($bild)){
-                $bild = "book.jpg";
-            }
-
             $errors = [];
 
             if (empty($kurztitel)) $errors[] = "Kurztitel ist erforderlich.";
@@ -232,17 +228,29 @@
             }
             if ($kategorieInsert === "default") $errors[] = "Kategorie ist erforderlich.";
 
+            if (!empty($bild)){
             $imageInfo = isset($bild['tmp_name']) ? getimagesize($bild['tmp_name']) : false;
             if ($imageInfo === false) {
                 $errors[] = "Die hochgeladene Datei ist kein Bild.";
             } elseif ($imageInfo['mime'] == image_type_to_mime_type(IMAGETYPE_JPEG) || $imageInfo['mime'] == image_type_to_mime_type(IMAGETYPE_PNG)) {
                 $errors[] = "Das Bild muss im JPEG- oder PNG-Format sein.";
+            }}
+            if (empty($bild)){
+                $bild = "book.jpg";
             }
 
             if (count($errors) === 0) {
 
-                $stmt = $conn->prepare("INSERT INTO buecher (kurztitle, autor, title, nummer, katalog, kategorie, verfasser, zustand)
-                                        VALUES (:kurztitel, :autor, :beschreibung, :nummer, :katalog, :kategorieInsert, :verfasInsert, :zustandInsert)");
+                // Bild hochladen und Pfad speichern
+                if ($bild !== "book.jpg"){
+                    $bildPfad = 'Bilder/'. basename($bild);
+                    move_uploaded_file($bild, $bildPfad);
+                } else {
+                    $bildPfad = $bild;
+                }
+
+                $stmt = $conn->prepare("INSERT INTO buecher (kurztitle, autor, title, nummer, katalog, kategorie, verfasser, zustand, foto)
+                                        VALUES (:kurztitel, :autor, :beschreibung, :nummer, :katalog, :kategorieInsert, :verfasInsert, :zustandInsert, :bild)");
                 $stmt->bindParam(':kurztitel', $kurztitel);
                 $stmt->bindParam(':autor', $autor);
                 $stmt->bindParam(':beschreibung', $beschreibung);
@@ -251,10 +259,6 @@
                 $stmt->bindParam(':kategorieInsert', $kategorieInsert);
                 $stmt->bindParam(':verfasInsert', $verfasInsert);
                 $stmt->bindParam(':zustandInsert', $zustandInsert);
-
-                // Bild hochladen und Pfad speichern
-                $bildPfad = 'Bilder/' . basename($bild['name']);
-                move_uploaded_file($bild['tmp_name'], $bildPfad);
                 $stmt->bindParam(':bild', $bildPfad);
 
                 $stmt->execute();
@@ -383,7 +387,7 @@
         }
         
         // Datensätze auslesen 
-        $select = $conn->prepare("SELECT `kurztitle`, `autor`, `id` 
+        $select = $conn->prepare("SELECT `kurztitle`, `autor`, `id`, `foto`
                                   FROM `buecher` 
                                   $zustandFilter
                                   $kategorie
@@ -405,7 +409,9 @@
                 $kurztitel = $nachricht->kurztitle;
                 $autor = $nachricht->autor;
                 echo '<div class="flex">';
+                if ($nachricht->foto === "book.jpg"){
                 echo '<a href="buchdetail.php?id=' . $nachricht->id . '"class="BildBuch"><img src="Bilder/book-cover.svg" alt="Bild' . $nachricht->kurztitle . '" class="small-svg"></a> <br>';
+                } else {echo '<a href="buchdetail.php?id=' . $nachricht->id . '"class="BildBuch"><img src="'. $nachricht->foto .'" alt="Bild: ' . $nachricht->kurztitle . '" class="small-svg"></a> <br>';}   
                 echo '<em id="buchtitel">' . substr($kurztitel, 0, 23) . '</em><br>' .
                     ' <em id="buchautor">' . substr($autor, 0, 25) . '</em><br>';
                 if (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == true) {
