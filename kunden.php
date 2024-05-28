@@ -19,6 +19,16 @@
 
         }
 
+        function openHinzufuegen() {
+            document.getElementById('hinzufuegenPop').style.display = 'block';
+
+        }
+
+        function closeHinzufuegen() {
+            document.getElementById('hinzufuegenPop').style.display = 'none';
+
+        }
+
         // JavaScript-Funktion zum Aktualisieren der Sortierreihenfolge (ohne submit button, sondern bei wählen/klicken)
         function updateSortOrder() {
             // erstellt eine variable sort_order und weist dieser das value des elementes, welches er durch die ID erhält
@@ -52,6 +62,7 @@
     ?>
 
         <!--beim wählen einer option in der dropdownliste wird durch das ""onchange" die javascript funktion ""updateSortOrder" aufgerufen-->
+<div class="divbtns">
     <select name="sortieren" class="btns" id="sortieren" onchange="updateSortOrder()">
         <option value="default">Sortieren</option>
         <option value="vornameAZ">Vorname(A-Z)</option>
@@ -93,28 +104,85 @@
         </div>
         <br>
 
-        <div>
+        <button class="btns" id="popbutton" onclick="openHinzufuegen()">Hinzufügen</button>
+        <div id="hinzufuegenPop" class="popup">
             <form action="kunden.php" method="post">
                 <h2>Kunde hinzufügen</h2>
                 <label for="vorname">Vorname*:</label>
-                <input type="text" name="vorname" id="vorname">
+                <input type="text" name="vorname" id="vorname" required>
                 <br>
                 <label for="nachname">Nachname*:</label>
-                <input type="text" name="nachname" id="nachname">
+                <input type="text" name="nachname" id="nachname" required>
+                <br>
+                <label for="geschlecht">Geschlecht:</label>
+                <br>
+                <input type="radio" name="geschlecht" id="F" value="F" required> Weiblich
+                <br>
+                <input type="radio" name="geschlecht" id="M" value="M" required> Männlich
                 <br>
                 <label for="email">Email*:</label>
-                <input type="email" name="email" id="email">
+                <input type="email" name="email" id="email" required>
                 <br>
                 <label for="gebu">Geburtstag:</label>
                 <input type="date" name="gebu" id="gebu">
                 <br>
-                <label for="geschlecht">Geschlecht:</label>
-                inp
-            </form>
+                <label for="Kontakt">Kontakt per Email:</label>
+                <input type="checkbox" name="1" id="1" value="1">
+                <div class="allFilter">
+                <input type="submit" name="submitKunde" value="Kunde hinzufügen">
+                </form>
+                <!--löst beim klicken des buttons die javascript funktion closePopup() aus und schliesst das Popup-->
+                <input type="button" name="schliessen" onclick="closeHinzufuegen()" value="Schliessen">
+            </div>
         </div>
-
+</div>    
 
         <?php
+        if (isset($_POST['submitKunde'])){
+
+            $sql = "SELECT MAX(kid) AS idMax FROM kunden";
+            $stmt = $conn->query($sql);
+            $row = $stmt->fetch();
+
+            $idMax = $row['idMax'];
+            $kid = $idMax + 1;
+            
+            $vorname = trim($_POST['vorname']);
+            $name = trim($_POST['nachname']);
+            $geschlecht = $_POST['geschlecht'];
+            $email = trim($_POST['email']);
+            $gebu = $_POST['gebu'];
+            $kontakt = isset($_POST['1']);
+            $kundeSeit = date('Y-m-d');;
+
+
+            $errors = [];
+            
+            if (empty($vorname)) $errors[] = "Vorname ist erforderlich.";
+            if (empty($name)) $errors[] = "Nachname ist erforderlich.";
+            if (empty($email)) $errors[] = "Email ist erforderlich.";
+
+            if (is_countable($errors) && count($errors) === 0) {
+
+                $stmt = $conn->prepare("INSERT INTO kunden (kid, geburtstag, vorname, name, geschlecht, kunde_seit, email, kontaktpermail)
+                                        VALUES (:kid, :gebu, :vorn, :name, :geschlecht, :seit, :email, :kontakt)");
+                $stmt->bindParam(':kid', $kid);
+                $stmt->bindParam(':gebu', $gebu);
+                $stmt->bindParam(':vorn', $vorname);
+                $stmt->bindParam(':name', $name);
+                $stmt->bindParam(':geschlecht', $geschlecht);
+                $stmt->bindParam(':seit', $kundeSeit);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':kontakt', $kontakt);
+
+                $stmt->execute();
+                echo "Kunde erfolgreich hinzugefügt!";
+            } else {
+                foreach ($errors as $error) {
+                    echo "<p class='error'>$error</p> <br>";
+                }
+            }}
+
         // Standard Sortierreihenfolge
         $kollone = 'kid';
         $orderSort = 'ASC';
@@ -190,16 +258,6 @@
 
         // Den Versatz ermitteln 
         $Versatz = $AktuelleSeite * $DatensaetzeSeite - $DatensaetzeSeite;
-
-        
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $KundeId = $_POST['id'];    
-            // SQL zum Löschen des Buches
-            $sql = "DELETE FROM kunden WHERE kid = :id";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindValue(':id', $KundeId, PDO::PARAM_INT);
-            $stmt->execute(); 
-        }
         
         // Datensätze auslesen 
         $select = $conn->prepare("SELECT `vorname`, `name`, `kid` 
@@ -214,6 +272,15 @@
         $select->execute();
         $nachrichten = $select->fetchAll(PDO::FETCH_OBJ);
 
+        if (isset($_POST['delete'])) {
+            $KundeId = $_POST['id'];    
+            // SQL zum Löschen des Buches
+            $sql = "DELETE FROM kunden WHERE kid = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':id', $KundeId, PDO::PARAM_INT);
+            $stmt->execute(); 
+        }
+
         // Ausgabe über eine Foreach-Schleife 
         if ($AnzahlDatensaetze > 0) {
             echo '<div class="kundenliste">';
@@ -221,9 +288,9 @@
                 echo '<div class="kundenEinzeln">';
                 echo '<em id="kundeV">' . $nachricht->vorname . '</em><br>' .
                     ' <em id="kundeN">' . $nachricht->name . '</em><br>';
-                echo '<form action="" method="post">';
+                echo '<form action="kunden.php" method="post">';
                 echo '<input type="hidden" name="id" value="'. $nachricht->kid .'">';
-                echo '<button type="submit"><img src="Bilder/delete.svg" alt="Delete"></button>';
+                echo '<button type="submit" name="delete"><img src="Bilder/delete.svg" alt="Delete"></button>';
                 echo '</form>'; 
                 echo '</div>';
                 echo '<br>';

@@ -31,10 +31,17 @@ if(isset($_POST['username']) && isset($_POST['password'])){
     $benutzer = $statement->fetch();
     
     if ($benutzer && password_verify($password, $benutzer['passwort'])){ 
-        $_SESSION['username'] = $benutzer['Benutzername'];
-        $_SESSION['loggedin'] = true;
-        header('Location: index.php');
-        exit;
+        if ($benutzer['admin'] === 1){
+            $_SESSION['username'] = $benutzer['Benutzername'];
+            $_SESSION['loggedin'] = true;
+            header('Location: index.php');
+            exit;
+        }else{
+            $_SESSION['username'] = $benutzer['Benutzername'];
+            $_SESSION['loggedinBenutzer'] = true;
+            header('Location: index.php');
+            exit;
+        }
     } else{
         echo "<div class='error'>";
         $error = "Das Passwort oder der Benutzername ist ungültig.";

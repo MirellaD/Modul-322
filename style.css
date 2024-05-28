@@ -95,7 +95,8 @@ nav {
 
 .footer {
   clear: both;
-  padding-top: 1%;
+  padding-top: 0.5%;
+  padding-bottom: 0.5% ;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -196,7 +197,6 @@ nav {
 
 /* Bücher seite */
 .btns{
-  display: flex;
   background-color: #ffffff;
   float: left;
   margin-right: 1vw;
@@ -207,7 +207,10 @@ nav {
   font-family: 'overlock';
   vertical-align: middle;
 }
-select.btns{
+.divbtns{
+  display: flex;
+}
+select#sortieren.btns{
   margin-left: 3vw;
   justify-content: center;
 }
@@ -247,6 +250,10 @@ select.btns{
   grid-template-columns: repeat(6, 1fr);
   /* anzahl bilder in einer reihe */
   align-items: stretch;
+}
+.deletebtn{
+  background-color:#faf7f0;
+  border: 0;
 }
 
 .small-svg{
@@ -312,7 +319,7 @@ iframe {
 .popup {
   display: none;
   /* Das Popup standardmaessig ausblenden */
-  position: absolute;
+  position: fixed;
   top: 175px;
   left: 21vw;
   transform: translate(-50%, -50%);
@@ -323,7 +330,7 @@ iframe {
   background-color: #faf7f0;
   border: 1px solid #ccc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  z-index: 10000;
+  z-index: 20;
 }
 .popup h2{
   margin: 0;
@@ -495,7 +502,7 @@ iframe {
 
  .kundenEinzeln{
   display: block;
-  border: 2px solid red;
+  border-bottom: 1px solid #e5dfd3;
  }
  .error{
   color:red;

@@ -64,136 +64,137 @@
     include('inc/navigation.php');  
     include('inc/inc.php'); 
     ?>
-
         <!--beim wählen einer option in der dropdownliste wird durch das ""onchange" die javascript funktion ""updateSortOrder" aufgerufen-->
-    <select name="sortieren" class="btns" id="sortieren" onchange="updateSortOrder()">
-        <option value="default">Sortieren</option>
-        <option value="titelAZ">Titel(A-Z)</option>
-        <option value="titelZA">Titel(Z-A)</option>
-        <option value="autorAZ">Autor(A-Z)</option>
-        <option value="autorZA">Autor(Z-A)</option>
-    </select>
+    <div class="divbtns">
+        <select name="sortieren" class="btns" id="sortieren" onchange="updateSortOrder()">
+            <option value="default">Sortieren</option>
+            <option value="titelAZ">Titel(A-Z)</option>
+            <option value="titelZA">Titel(Z-A)</option>
+            <option value="autorAZ">Autor(A-Z)</option>
+            <option value="autorZA">Autor(Z-A)</option>
+        </select>
 
-    <select name="zustaende" class="btns" id="zustaende" onchange="updateZustand()">
+        <select name="zustaende" class="btns" id="zustaende" onchange="updateZustand()">
+            <option value="default">Zustand</option>
+            <option value="G">Gut</option>
+            <option value="M">Mittel</option>
+            <option value="S">Schlecht</option>
+        </select>
+        
+        <!-- Button zum Oeffnen des Popup-Fensters (ruft die javascript funktion openPopup() auf)-->
+        <button class="btns" id="popbutton" onclick="openPopup()">Alle Filter</button>
+            <!-- Das Popup-Fenster -->
+            <div id="popup" class="popup">
+                <h2>Alle Filter</h2>
+
+                <select name="kategorien" id="kategorien" onchange="updateKategorien()">
+                    <option value="default">kategorien</option>
+                    <option value="1">Alte Drucke, Bibeln, Klassische Autoren</option>
+                    <option value="2">Geographie und Reisen</option>
+                    <option value="3">Geschichtswissenschaften</option>
+                    <option value="4">Naturwissenschaften</option>
+                    <option value="5">Kinderbücher</option>
+                    <option value="6">Moderne Literatur und Kunst</option>
+                    <option value="7">Moderne Kunst und Künstlergraphik</option>
+                    <option value="8">Kunstwissenschaften</option>
+                    <option value="9">Architektur</option>
+                    <option value="10">Technik</option>
+                    <option value="11">Naturwissenschaften - Medizin</option>
+                    <option value="12">Ozeanien</option>
+                    <option value="13">Afrika</option>
+                </select>
+                <br>
+                <select name="verfas" id="verfas" onchange="updateVerfasser()">
+                    <option value="default">Verfasser</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                </select>
+                <br>
+                <div class="allFilter">
+                    <!--löst beim klicken des buttons die javascript funktion closePopup() aus und schliesst das Popup-->
+                    <input type="button" name="schliessen" onclick="closePopup()" value="Schliessen">
+                </div>
+
+            </div>
+
+            <div>
+                <!--onkeypress löst bei Enter (der keycode für Enter ist 13) drücken die javascript funktion aus-->
+                    <input id="searchbar" class="btns" type="search" placeholder="Buch oder Autor suchen..." onkeypress="if(event.keyCode === 13) searchResultat();">
+            </div>
+            <br>
+
+            <?php 
+            if (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == true) { ?>
+            <button class="btns" id="popbutton" onclick="openHinzufuegen()">Hinzufügen</button>
+            <div id="hinzufuegenPop" class="popup">
+            <h2>Buch hinzufügen</h2>
+
+            <form action="buecher.php" method="post">
+            <label for="kurztitel">Titel*:</label>
+            <input type="text" name="kurztitel" id="kurztitel" required>
+            <br>
+            <label for="autor">Autor*:</label>
+            <input type="text" name="autor" id="autor" required>
+            <br>
+            <label for="beschreibung">Beschreibung:</label>
+            <textarea id="beschreibung" name="beschreibung" rows="4" cols="50"></textarea>
+            <br>
+            <label for="nummer">Nummer*:</label>
+            <input type="number" name="nummer" id="nummer" min="0" required>
+            <br>
+            <label for="bookimage">Bild des Buches hochladen:</label>
+            <input type="file" name="bookimage" />
+            <br>
+        <label for="katalog">Katalog*:</label>
+        <input type="number" name="katalog" id="katalog" min="0" required>
+        <br>
+        <label for="kategorieInsert">Kategorie*:</label>
+        <select name="kategorieInsert" id="kategorieInsert" required>
+            <option value="default">kategorien</option>
+            <option value="1">Alte Drucke, Bibeln, Klassische Autoren</option>
+            <option value="2">Geographie und Reisen</option>
+            <option value="3">Geschichtswissenschaften</option>
+            <option value="4">Naturwissenschaften</option>
+            <option value="5">Kinderbücher</option>
+            <option value="6">Moderne Literatur und Kunst</option>
+            <option value="7">Moderne Kunst und Künstlergraphik</option>
+            <option value="8">Kunstwissenschaften</option>
+            <option value="9">Architektur</option>
+            <option value="10">Technik</option>
+            <option value="11">Naturwissenschaften - Medizin</option>
+            <option value="12">Ozeanien</option>
+            <option value="13">Afrika</option>
+        </select>
+        <br>
+        <label for="verfasInsert">Verfasser:</label>
+        <select name="verfasInsert" id="verfasInsert">
+            <option value="default">Verfasser</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+        </select>
+        <br>
+        <label for="zustandInsert">Zustand:</label>
+        <select name="zustandInsert" id="zustandInsert">
         <option value="default">Zustand</option>
         <option value="G">Gut</option>
         <option value="M">Mittel</option>
         <option value="S">Schlecht</option>
-    </select>
-    
-    <!-- Button zum Oeffnen des Popup-Fensters (ruft die javascript funktion openPopup() auf)-->
-    <button class="btns" id="popbutton" onclick="openPopup()">Alle Filter</button>
-        <!-- Das Popup-Fenster -->
-        <div id="popup" class="popup">
-            <h2>Alle Filter</h2>
-
-            <select name="kategorien" id="kategorien" onchange="updateKategorien()">
-                <option value="default">kategorien</option>
-                <option value="1">Alte Drucke, Bibeln, Klassische Autoren</option>
-                <option value="2">Geographie und Reisen</option>
-                <option value="3">Geschichtswissenschaften</option>
-                <option value="4">Naturwissenschaften</option>
-                <option value="5">Kinderbücher</option>
-                <option value="6">Moderne Literatur und Kunst</option>
-                <option value="7">Moderne Kunst und Künstlergraphik</option>
-                <option value="8">Kunstwissenschaften</option>
-                <option value="9">Architektur</option>
-                <option value="10">Technik</option>
-                <option value="11">Naturwissenschaften - Medizin</option>
-                <option value="12">Ozeanien</option>
-                <option value="13">Afrika</option>
-            </select>
-            <br>
-            <select name="verfas" id="verfas" onchange="updateVerfasser()">
-                <option value="default">Verfasser</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-            </select>
-            <br>
-            <div class="allFilter">
-                <!--löst beim klicken des buttons die javascript funktion closePopup() aus und schliesst das Popup-->
-                <input type="button" name="schliessen" onclick="closePopup()" value="Schliessen">
-            </div>
-
+        </select>
+        <br>
+        <div class="allFilter">
+            <input type="submit" name="submitBook" value="Buch hinzufügen">
+            </form>
+            <!--löst beim klicken des buttons die javascript funktion closePopup() aus und schliesst das Popup-->
+            <input type="button" name="schliessen" onclick="closeHinzufuegen()" value="Schliessen">
         </div>
-
-        <div>
-            <!--onkeypress löst bei Enter (der keycode für Enter ist 13) drücken die javascript funktion aus-->
-                <input id="searchbar" class="btns" type="search" placeholder="Buch oder Autor suchen..." onkeypress="if(event.keyCode === 13) searchResultat();">
-        </div>
-        <br>
-
-        <?php 
-        if (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == true) { ?>
-        <button class="btns" id="popbutton" onclick="openHinzufuegen()">Hinzufügen</button>
-        <div id="hinzufuegenPop" class="popup">
-        <h2>Buch hinzufügen</h2>
-
-        <form action="buecher.php" method="post">
-        <label for="kurztitel">Titel*:</label>
-        <input type="text" name="kurztitel" id="kurztitel" required>
-        <br>
-        <label for="autor">Autor*:</label>
-        <input type="text" name="autor" id="autor" required>
-        <br>
-        <label for="beschreibung">Beschreibung:</label>
-        <textarea id="beschreibung" name="beschreibung" rows="4" cols="50"></textarea>
-        <br>
-        <label for="nummer">Nummer*:</label>
-        <input type="number" name="nummer" id="nummer" min="0" required>
-        <br>
-        <label for="bookimage">Bild des Buches hochladen:</label>
-        <input type="file" name="bookimage" />
-        <br>
-    <label for="katalog">Katalog*:</label>
-    <input type="number" name="katalog" id="katalog" min="0" required>
-    <br>
-    <label for="kategorieInsert">Kategorie*:</label>
-    <select name="kategorieInsert" id="kategorieInsert" required>
-        <option value="default">kategorien</option>
-        <option value="1">Alte Drucke, Bibeln, Klassische Autoren</option>
-        <option value="2">Geographie und Reisen</option>
-        <option value="3">Geschichtswissenschaften</option>
-        <option value="4">Naturwissenschaften</option>
-        <option value="5">Kinderbücher</option>
-        <option value="6">Moderne Literatur und Kunst</option>
-        <option value="7">Moderne Kunst und Künstlergraphik</option>
-        <option value="8">Kunstwissenschaften</option>
-        <option value="9">Architektur</option>
-        <option value="10">Technik</option>
-        <option value="11">Naturwissenschaften - Medizin</option>
-        <option value="12">Ozeanien</option>
-        <option value="13">Afrika</option>
-    </select>
-    <br>
-    <label for="verfasInsert">Verfasser:</label>
-    <select name="verfasInsert" id="verfasInsert">
-        <option value="default">Verfasser</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-    </select>
-    <br>
-    <label for="zustandInsert">Zustand:</label>
-    <select name="zustandInsert" id="zustandInsert">
-    <option value="default">Zustand</option>
-    <option value="G">Gut</option>
-    <option value="M">Mittel</option>
-    <option value="S">Schlecht</option>
-    </select>
-    <br>
-    <div class="allFilter">
-        <input type="submit" name="submitBook" value="Buch hinzufügen">
-        </form>
-        <!--löst beim klicken des buttons die javascript funktion closePopup() aus und schliesst das Popup-->
-        <input type="button" name="schliessen" onclick="closeHinzufuegen()" value="Schliessen">
     </div>
 </div>
 <?php } ?>
@@ -275,6 +276,10 @@
             }
         }
 
+
+        function checkFileExtension($ext) {
+            return in_array(strtolower($ext), ['jpg', 'jpeg', 'png']);
+        }
         
         if (isset($_POST['submitBook'])){
             
@@ -287,8 +292,9 @@
             $verfasInsert = trim($_POST['verfasInsert']);
             $zustandInsert = trim($_POST['zustandInsert']);
 
-            $errors = [];
 
+            $errors = [];
+            
             if (empty($kurztitel)) $errors[] = "Kurztitel ist erforderlich.";
             if (empty($autor)) $errors[] = "Autor ist erforderlich.";
             if (empty($nummer)) {
@@ -302,15 +308,7 @@
                 $errors[] = "Katalog muss eine positive Zahl sein.";
             }
             if ($kategorieInsert === "default") $errors[] = "Kategorie ist erforderlich.";
-
-            function checkFileExtension($ext) {
-                if ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'png') {
-                    $pass = 1;
-                } else {
-                    $pass = 0;
-                }
-               return $pass;
-            }
+    
             $fileNameComplete = "book.jpg"; // Default image
             if (isset($_FILES["file"])) {
         
@@ -336,7 +334,7 @@
                 $errors[] = "File upload error: " . $_FILES['file']['error'];
             };
 
-            if (count($errors) === 0) {
+            if (is_countable($errors) && count($errors) === 0) {
 
                 $stmt = $conn->prepare("INSERT INTO buecher (kurztitle, autor, title, nummer, katalog, kategorie, verfasser, zustand, foto)
                                         VALUES (:kurztitel, :autor, :beschreibung, :nummer, :katalog, :kategorieInsert, :verfasInsert, :zustandInsert, :bild)");
@@ -356,9 +354,9 @@
                 foreach ($errors as $error) {
                     echo "<p class='error'>$error</p> <br>";
                 }
-            }
-
-        }
+            }}
+        
+        
         
         // Anzeige der Datensätze pro Seite 
         $DatensaetzeSeite = 18;
@@ -391,16 +389,16 @@
 
         // Den Versatz ermitteln 
         $Versatz = $AktuelleSeite * $DatensaetzeSeite - $DatensaetzeSeite;
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $buchId = isset($_POST['id']);    
+        
+        if (isset($_POST['delete'])) {
+            $buchId = $_POST['id'];    
             // SQL zum Löschen des Buches
             $sql = "DELETE FROM buecher WHERE id = :id";
             $stmt = $conn->prepare($sql);
-            $stmt->bindValue(':id', $buchId, PDO::PARAM_INT);
+            $stmt->bindParam(':id', $buchId, PDO::PARAM_INT);
             $stmt->execute(); 
         }
-        
+
         // Datensätze auslesen 
         $select = $conn->prepare("SELECT `kurztitle`, `autor`, `id`, `foto`
                                   FROM `buecher` 
@@ -415,7 +413,6 @@
         $select->bindValue(':dseite', $DatensaetzeSeite, PDO::PARAM_INT);
         $select->execute();
         $nachrichten = $select->fetchAll(PDO::FETCH_OBJ);
-        var_dump($nachrichten);
 
         // Ausgabe über eine Foreach-Schleife 
         if ($AnzahlDatensaetze > 0) {
@@ -433,7 +430,7 @@
                 if (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == true) {
                     echo '<form action="buecher.php" method="post">';
                     echo '<input type="hidden" name="id" value="'. $nachricht->id .'">';
-                    echo '<button type="submit"><img src="Bilder/delete.svg" alt="Delete"></button>';
+                    echo '<button type="submit" name="delete"><img src="Bilder/delete.svg" alt="Delete"></button>';
                     echo '</form>';
                 }
                 echo '</div>';

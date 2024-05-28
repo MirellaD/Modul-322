@@ -22,7 +22,16 @@
             echo "<div id='dropMenu' class='dropdown-content'>";
                 echo"<a href='logout.php'>logout</a>";
                 echo"<a href='passwort.php'>Passwort</a>";
+
                 echo"<a href='benutzer.php'>neuer Benutzer</a>";
+            echo"</div>";
+        echo"</div>";
+    } elseif (isset($_SESSION["loggedinBenutzer"]) && $_SESSION['loggedinBenutzer'] == true) {
+        echo"<div class='dropdown'>";
+            echo "<button id='login' onclick=showDrop() >Logged-in</button>";
+            echo "<div id='dropMenu' class='dropdown-content'>";
+                echo"<a href='logout.php'>logout</a>";
+                echo"<a href='passwort.php'>Passwort</a>";
             echo"</div>";
         echo"</div>";
     } else {

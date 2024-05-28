@@ -38,11 +38,13 @@ include('inc/inc.php');
 <?php 
 if(isset($_POST['newUser'])){ 
 
-    if (trim($_POST['pass']) !== trim($_POST['passB'])) {
-        echo "Eingegebene Passwörter stimmen nicht überein";
-        exit;
-    }
-    if(strlen(trim($_POST['pass'])) >= 8){
+    if (trim($_POST['pass']) !== trim($_POST['passB'])) $errors[] = "Eingegebene Passwörter stimmen nicht überein.";
+    if (strlen(trim($_POST['pass'])) < 8) $errors[] = "Passwort muss mindestens 8 Zeichen lang sein.";
+    if (empty($_POST['username'])) $errors[] = "Benutzername erforderlich.";
+    if (empty($_POST['pass'])) $errors[] = "Passwort erforderlich.";
+    if (strlen(trim($_POST['username'])) > 45) $errors[] = "Benutzername darf maximal 45 Zeichen lang sein.";
+
+    if (is_countable($errors) && count($errors) === 0){
     $username = htmlspecialchars(trim($_POST['username']));
     $name = htmlspecialchars(trim($_POST['name']));
     $vorname= htmlspecialchars(trim($_POST['vorname']));
@@ -65,7 +67,9 @@ if(isset($_POST['newUser'])){
         echo "Fehler beim Hinzufügen des Benutzers";
     }
 }else{
-    echo "Passwort muss mindestens 8 Zeichen lang sein";
+    foreach ($errors as $error) {
+        echo "<p class='error'>$error</p> <br>";
+    }
 }}
 ?>
 
