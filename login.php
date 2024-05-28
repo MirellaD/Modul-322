@@ -10,17 +10,18 @@
 <body>
 <?php include ('inc/navigation.php') ?>
 <?php include ('inc/inc.php');?>
-
-<h2>Log in</h2>
-<p>Loggen Sie sich ein, indem Sie Ihren Benutzernamen und Ihr Passwort eingeben.</p>
-<div class="login">
-<form action="login.php" method="post"> 
-    <label for="username">Benutzername:</label><br>
-    <input type="text" id="username" name="username" required/><br><br>
-    <label for="password">Passwort:</label><br>
-    <input type="password" id="password" name="password" required/><br><br>
-    <input id="logbutton" name="login" type="submit" value="Log in">
-</form>
+<div class="loginpage">
+    <div class="login">
+    <h2>Log in</h2>
+    <p>Loggen Sie sich ein, indem Sie Ihren Benutzernamen und Ihr Passwort eingeben.</p>
+    <form action="login.php" method="post"> 
+        <label for="username">Benutzername:</label><br>
+        <input type="text" id="username" name="username" required/><br><br>
+        <label for="password">Passwort:</label><br>
+        <input type="password" id="password" name="password" required/><br><br>
+        <input id="logbutton" name="login" type="submit" value="Log in">
+    </form>
+    </div>
 </div>
 <?php
 if(isset($_POST['username']) && isset($_POST['password'])){ 

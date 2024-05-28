@@ -56,6 +56,8 @@
             window.location.href = window.location.pathname + "?search=" + search;
         }
 
+        
+
     </script>
 </head>
 
@@ -129,7 +131,7 @@
 
             <?php 
             if (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == true) { ?>
-            <button class="btns" id="popbutton" onclick="openHinzufuegen()">Hinzufügen</button>
+            <button class="btns" id="popbutton2" onclick="openHinzufuegen()">Hinzufügen</button>
             <div id="hinzufuegenPop" class="popup">
             <h2>Buch hinzufügen</h2>
 

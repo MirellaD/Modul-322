@@ -28,6 +28,15 @@
             document.getElementById('hinzufuegenPop').style.display = 'none';
 
         }
+        function openKunden() {
+            document.getElementById('popupKunden').style.display = 'block';
+
+        }
+
+        function closeKunden() {
+            document.getElementById('popupKunden').style.display = 'none';
+
+        }
 
         // JavaScript-Funktion zum Aktualisieren der Sortierreihenfolge (ohne submit button, sondern bei wählen/klicken)
         function updateSortOrder() {
@@ -52,6 +61,9 @@
             var search = document.getElementById("searchbar").value; // Abrufen des Suchbegriffs
             window.location.href = window.location.pathname + "?search=" + search;
         }
+
+       
+
     </script>
 </head>
 
@@ -107,27 +119,27 @@
         <button class="btns" id="popbutton" onclick="openHinzufuegen()">Hinzufügen</button>
         <div id="hinzufuegenPop" class="popup">
             <form action="kunden.php" method="post">
-                <h2>Kunde hinzufügen</h2>
+                <h2>Kunde hinzufügen</h2><br>
                 <label for="vorname">Vorname*:</label>
                 <input type="text" name="vorname" id="vorname" required>
-                <br>
+                <br><br>
                 <label for="nachname">Nachname*:</label>
                 <input type="text" name="nachname" id="nachname" required>
-                <br>
-                <label for="geschlecht">Geschlecht:</label>
-                <br>
+                <br><br>
+                <label for="geschlecht">Geschlecht:</label><br>
                 <input type="radio" name="geschlecht" id="F" value="F" required> Weiblich
                 <br>
                 <input type="radio" name="geschlecht" id="M" value="M" required> Männlich
-                <br>
+                <br><br>
                 <label for="email">Email*:</label>
                 <input type="email" name="email" id="email" required>
-                <br>
+                <br><br>
                 <label for="gebu">Geburtstag:</label>
                 <input type="date" name="gebu" id="gebu">
-                <br>
+                <br><br>
                 <label for="Kontakt">Kontakt per Email:</label>
                 <input type="checkbox" name="1" id="1" value="1">
+                <br><br>
                 <div class="allFilter">
                 <input type="submit" name="submitKunde" value="Kunde hinzufügen">
                 </form>
@@ -260,7 +272,7 @@
         $Versatz = $AktuelleSeite * $DatensaetzeSeite - $DatensaetzeSeite;
         
         // Datensätze auslesen 
-        $select = $conn->prepare("SELECT `vorname`, `name`, `kid` 
+        $select = $conn->prepare("SELECT `vorname`, `name`, `kid`, `geschlecht`
                                   FROM `kunden`
                                   $geschlecht
                                   $KpE
@@ -286,18 +298,64 @@
             echo '<div class="kundenliste">';
             foreach ($nachrichten as $nachricht) {
                 echo '<div class="kundenEinzeln">';
-                echo '<em id="kundeV">' . $nachricht->vorname . '</em><br>' .
-                    ' <em id="kundeN">' . $nachricht->name . '</em><br>';
+                echo '<em id="kundeI">Id: ' . $nachricht->kid . '</em>' .
+                      '<em id="kundeV">  ' . $nachricht->vorname . '</em>' .
+                    ' <em id="kundeN"> ' . $nachricht->name . '</em>' .
+                    '<em id="kundeG"> ' . $nachricht->geschlecht . '</em>';
                 echo '<form action="kunden.php" method="post">';
                 echo '<input type="hidden" name="id" value="'. $nachricht->kid .'">';
                 echo '<button type="submit" name="delete"><img src="Bilder/delete.svg" alt="Delete"></button>';
-                echo '</form>'; 
+                echo '</form>';
+                echo '<button type="button" onclick="openKunden()" value="'. $nachricht->kid .'">ändern</button>';
                 echo '</div>';
                 echo '<br>';
             }
         }
         echo '</div>';
 
+        /*echo '<div id="popupKunden" class="popupKunden">';
+            if (isset($_POST['kid'])) {
+                $kID = $_GET['kid'];
+
+                $Query = $conn->prepare("SELECT * FROM kunden WHERE kid = :id");
+                $Query->bindParam(':id', $kID, PDO::PARAM_INT);
+                $Query->execute();
+                $kunde = $Query->fetch(PDO::FETCH_ASSOC);
+
+            echo '<form action="kunden.php" method="post">';
+            echo '<input type="hidden" name="id" value="' . $kid . '">';
+            echo '<em id="kundeI">Id: ' . $nachricht->kid . '</em>';
+            echo '<label>Vorname: </label>';
+            echo '<input type="text" name="vorname" value="' . htmlspecialchars($kunde['vorname']) . '" required>';
+            echo '<label>Nachname: </label>';
+            echo '<input type="text" name="vorname" value="' . htmlspecialchars($kunde['name']) . '" required>';
+            echo '<label>Geschlecht: </label>';
+            if ($kunde['geschlecht'] === "M"){
+                echo '<input type="radio" name="geschlecht" id="F" value="F"> Weiblich'.
+                    '<input type="radio" name="geschlecht" id="M" value="M" checked> Männlich';
+            }elseif ($kunde['geschlecht'] === "F"){
+                echo '<input type="radio" name="geschlecht" id="F" value="F" checked> Weiblich'.
+                    '<input type="radio" name="geschlecht" id="M" value="M"> Männlich';
+            }
+            echo '<label>Geb.: </label>';
+            echo '<input type="date" name="gebu" id="gebu" value="'.$kunde['geburtstag'].'">';
+            echo '<label>E-Mail: </label>';
+            echo '<input type="email" name="email" id="email" value="'. $kunde['email'] .'" required>';
+            echo '<label>Kunde seit: </label>';
+            echo '<input type="date" name="kundeSeit" id="kundeSeit" value="'.$kunde['kunde_seit'].'">';
+            echo '<label>Kontakt per Mail: </label>';
+            if ($kunde['kontaktpermail' === 1]){
+                echo '<input type="checkbox" name="1" id="1" value="1" checked>';
+            }else{
+                echo '<input type="checkbox" name="1" id="1" value="1">';
+            }
+            echo '<input type="submit" value="Änderungen bestätigen" name="updateKunde">';
+            echo '</form>';
+
+            echo '<button onclick="closeKunden()">Schließen</button>';
+            }
+        echo '</div>';
+*/
 
             //Formular und Blätterfunktion
             echo '<form class="blättern" method="GET" autocomplete="off">' .

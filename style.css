@@ -320,13 +320,12 @@ iframe {
   display: none;
   /* Das Popup standardmaessig ausblenden */
   position: fixed;
-  top: 175px;
+  top: 200px;
   left: 21vw;
   transform: translate(-50%, -50%);
   max-width: fit-content;
   max-height: fit-content;
-  height: calc(7em + 2%);
-  padding: 2vw;
+  padding: 3vw;
   background-color: #faf7f0;
   border: 1px solid #ccc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
@@ -342,6 +341,10 @@ iframe {
   margin-bottom: 1em;
 }
 #popbutton{
+  position: relative;
+  display: inline-block;
+}
+#popbutton2{
   position: relative;
   display: inline-block;
 }
@@ -388,6 +391,37 @@ iframe {
   max-width: fit-content;
   background-color: white;
 }
+.loginpage{
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  position: fixed;
+  height: auto;
+  max-width: max-content;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.login{
+  align-items: center;
+  background-color: white;
+  padding-left: 5%;
+  padding-right: 5%;
+  max-width: fit-content;
+  
+ }
+ 
+ #logbutton{
+  color: white;
+  background-color: #000000;
+  border-radius: 3px;
+  padding-inline: 14%;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  border: solid 1px;
+  font-family: 'overlock';
+ }
 .messagesPass{
   text-align: center;
 }
@@ -490,16 +524,6 @@ iframe {
   margin-left: 0.5vw;
  }
 
- .login{
-  align-items: center;
-  background-color: white;
- }
- 
- #logbutton{
-  color: white;
-  background-color: #000000;
- }
-
  .kundenEinzeln{
   display: block;
   border-bottom: 1px solid #e5dfd3;
@@ -507,3 +531,5 @@ iframe {
  .error{
   color:red;
  }
+
+

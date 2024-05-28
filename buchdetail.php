@@ -28,7 +28,6 @@
         $buchQuery->execute();
         $buch = $buchQuery->fetch(PDO::FETCH_ASSOC);
 
-        echo print_r($buch);
 
         echo '<br>';
         echo '<div class="detailbild">';
