@@ -280,12 +280,15 @@
         }
 
 
+        // Funktion, um die Dateierweiterung zu überprüfen
         function checkFileExtension($ext) {
             return in_array(strtolower($ext), ['jpg', 'jpeg', 'png']);
         }
-        
-        if (isset($_POST['submitBook'])){
+
+        // Überprüfen, ob das Formular zum Hinzufügen eines Buchs abgesendet wurde
+        if (isset($_POST['submitBook'])) {
             
+            // Formulardaten abrufen und bereinigen
             $kurztitel = trim($_POST['kurztitel']);
             $autor = trim($_POST['autor']);
             $beschreibung = trim($_POST['beschreibung']);
@@ -295,9 +298,10 @@
             $verfasInsert = trim($_POST['verfasInsert']);
             $zustandInsert = trim($_POST['zustandInsert']);
 
-
+            // Fehlerarray initialisieren
             $errors = [];
             
+            // Erforderliche Felder überprüfen
             if (empty($kurztitel)) $errors[] = "Kurztitel ist erforderlich.";
             if (trim(strlen($kurztitel)) > 100) $errors[] = "Der Titel darf maximal 100 Zeichen lang sein.";
             if (empty($autor)) $errors[] = "Autor ist erforderlich.";
@@ -312,15 +316,18 @@
                 $errors[] = "Katalog muss eine positive Zahl sein.";
             }
             if ($kategorieInsert === "default") $errors[] = "Kategorie ist erforderlich.";
-    
-            $fileNameComplete = "book.jpg"; // Default image
+
+            // Standard-Bild-Dateiname festlegen
+            $fileNameComplete = "book.jpg";
+
+            // Überprüfen, ob eine Datei hochgeladen wurde und ob keine Fehler beim Hochladen aufgetreten sind
             if (isset($_FILES["bookimage"]) && $_FILES["bookimage"]["error"] === UPLOAD_ERR_OK) {
-                // Datei wurde erfolgreich hochgeladen, jetzt sicher darauf zugreifen
+
+                // Dateierweiterung überprüfen
                 $ext = pathinfo($_FILES['bookimage']['name'], PATHINFO_EXTENSION);
-            
                 $fileAccepted = checkFileExtension($ext);
-                $fileSize = $_FILES['bookimage']['size'];
-        
+
+                // Wenn die Dateierweiterung gültig ist
                 if ($fileAccepted) {
                     $uploadFileName = $_FILES['bookimage']['name'];
                     $fileName = strtok($uploadFileName, ".");
@@ -328,16 +335,22 @@
                     $fileNameFinalized = str_replace(' ', '_', $fileNameShortened);
                     $fileNameComplete = $fileNameFinalized . '.' . $ext;
                     $dest = __DIR__ . 'Bilder/' . $fileNameComplete;
-        
+
                 } else {
+                    // Fehler bei ungültigem Dateiformat
                     $errors[] = "Falsches Dateiformat";
                 }
             }
 
+            // Überprüfen, ob Fehler aufgetreten sind
             if (is_countable($errors) && count($errors) === 0) {
+                // Keine Fehler, daher Buch in die Datenbank einfügen
 
+                // SQL-Anweisung vorbereiten und Buchdaten einfügen
                 $stmt = $conn->prepare("INSERT INTO buecher (kurztitle, autor, title, nummer, katalog, kategorie, verfasser, zustand, foto)
                                         VALUES (:kurztitel, :autor, :beschreibung, :nummer, :katalog, :kategorieInsert, :verfasInsert, :zustandInsert, :bild)");
+                
+                // Parameter binden
                 $stmt->bindParam(':kurztitel', $kurztitel);
                 $stmt->bindParam(':autor', $autor);
                 $stmt->bindParam(':beschreibung', $beschreibung);
@@ -348,13 +361,19 @@
                 $stmt->bindParam(':zustandInsert', $zustandInsert);
                 $stmt->bindParam(':bild', $fileNameComplete);
 
+                // SQL-Anweisung ausführen
                 $stmt->execute();
+
+                // Erfolgsmeldung ausgeben
                 echo "Buch erfolgreich hinzugefügt!";
             } else {
+                // Fehler beim Validieren der Eingaben, Fehlermeldungen ausgeben
                 foreach ($errors as $error) {
                     echo "<p class='error'>$error</p>";
                 }
-            }}
+            }
+        }
+
         
         
         

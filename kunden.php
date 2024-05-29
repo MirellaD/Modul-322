@@ -149,17 +149,21 @@
                 <input type="button" name="schliessen" onclick="closeHinzufuegen()" value="Schliessen">
             </div>
         </div>
+    </div>
 
         <div id="popupKunden" class="popupKunden">
             <?php
+            //schaut ob kid gesetzt ist und holt sie
             if (isset($_GET['kid'])) {
                 $kID = $_GET['kid'];
-
+                //sql abfrage der passenden Daten
                 $Query = $conn->prepare("SELECT * FROM kunden WHERE kid = :id");
                 $Query->bindParam(':id', $kID, PDO::PARAM_INT);
                 $Query->execute();
                 $kunde = $Query->fetch(PDO::FETCH_ASSOC);
             ?>
+            <br>
+            <div class="kundenD">
             <form action="kunden.php" method="post">
                 <input type="hidden" name="id" value="<?= $kID ?>">
                 <em id="kundeI">Id: <?= $kunde['kid'] ?></em>
@@ -171,7 +175,8 @@
                 <input type="text" name="nachname" value="<?= htmlspecialchars($kunde['name']) ?>" required>
                 <br>
                 <label>Geschlecht: </label>
-                <?php if ($kunde['geschlecht'] === "M"): ?>
+                
+                <?php if ($kunde['geschlecht'] === "M"): //für radiobutton auswählen, welcher in der Datenbank ausgewählt wurde?>
                     <input type="radio" name="geschlecht" id="F" value="F"> Weiblich
                     <input type="radio" name="geschlecht" id="M" value="M" checked> Männlich
                 <?php elseif ($kunde['geschlecht'] === "F"): ?>
@@ -197,42 +202,55 @@
                 <br>
                 <input type="submit" value="Änderungen bestätigen" name="updateKunde">
             </form>
+            
+            
             <button onclick="closeKunden()">Schliessen</button>
-            <?php } ?>
-        </div>
+            </div>
+            <br><br>
+            <?php } 
+            echo '</div>';
+            ?>
 
-</div>    
 
 
     <?php
-    if (isset($_POST['submitKunde'])){
+    if (isset($_POST['submitKunde'])) { // Überprüfen, ob das Formular für das Hinzufügen eines Kunden abgesendet wurde
 
+        // Abfrage, um die maximale ID der Kunden zu erhalten
         $sql = "SELECT MAX(kid) AS idMax FROM kunden";
         $stmt = $conn->query($sql);
         $row = $stmt->fetch();
-
+    
+        // Die neue ID für den Kunden berechnen
         $idMax = $row['idMax'];
         $kid = $idMax + 1;
         
+        // Die eingereichten Formulardaten erhalten und Bereinigen
         $vorname = trim($_POST['vorname']);
         $name = trim($_POST['nachname']);
         $geschlecht = $_POST['geschlecht'];
         $email = trim($_POST['email']);
         $gebu = $_POST['gebu'];
-        $kontakt = isset($_POST['1']);
-        $kundeSeit = date('Y-m-d');;
-
-
+        $kontakt = isset($_POST['1']); // Prüfen, ob das Kontaktfeld markiert wurde
+        $kundeSeit = date('Y-m-d'); // Aktuelles Datum für "Kunde seit"
+    
+        // Fehlerarray initialisieren
         $errors = [];
-        
+    
+        // Überprüfen, ob erforderliche Felder leer sind und Fehler hinzufügen
         if (empty($vorname)) $errors[] = "Vorname ist erforderlich.";
         if (empty($name)) $errors[] = "Nachname ist erforderlich.";
         if (empty($email)) $errors[] = "Email ist erforderlich.";
-
+    
+        // Überprüfen, ob Fehler vorhanden sind
         if (is_countable($errors) && count($errors) === 0) {
-
+            // Keine Fehler, daher neuen Kunden in die Datenbank einfügen
+    
+            // Vorbereiten der SQL-Anweisung zum Einfügen der Kundendaten
             $stmt = $conn->prepare("INSERT INTO kunden (kid, geburtstag, vorname, name, geschlecht, kunde_seit, email, kontaktpermail)
                                     VALUES (:kid, :gebu, :vorn, :name, :geschlecht, :seit, :email, :kontakt)");
+            
+            // Parameter binden
             $stmt->bindParam(':kid', $kid);
             $stmt->bindParam(':gebu', $gebu);
             $stmt->bindParam(':vorn', $vorname);
@@ -241,14 +259,20 @@
             $stmt->bindParam(':seit', $kundeSeit);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':kontakt', $kontakt);
-
+    
+            // Ausführen der vorbereiteten Anweisung
             $stmt->execute();
+    
+            // Erfolgsmeldung ausgeben
             echo "Kunde erfolgreich hinzugefügt!";
         } else {
+            // Fehler beim Validieren der Eingaben, Fehlermeldungen ausgeben
             foreach ($errors as $error) {
                 echo "<p class='error'>$error</p>";
             }
-        }}
+        }
+    }
+    
 
 
         // Überprüfen, ob das Formular zum Aktualisieren des Kunden gesendet wurde
@@ -362,7 +386,7 @@
         // Anzeige der Datensätze pro Seite 
         $DatensaetzeSeite = 18;
 
-        // Anzahl der Datensätze ermitteln 
+        // Anzahl der Datensätze ermitteln (auch gefiltert)
         $AnzahlDatensaetze = $conn->query("SELECT COUNT(*) FROM kunden $geschlecht $KpE $searchVN")->fetchColumn(0);
 
         // Die Anzahl der Seiten ermitteln 

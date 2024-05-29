@@ -371,6 +371,10 @@ iframe {
   height: 2em;
   margin-bottom: 1em;
 }
+.kundenD{
+  border: solid 1px #ccc;
+  margin-left: 1%;
+}
 #popbutton{
   position: relative;
   display: inline-block;
