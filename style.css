@@ -79,7 +79,7 @@ nav {
   text-decoration:none;
   display:block;  
   font-size: 15px;
-
+  border-bottom: 1px solid #e5dfd3;
 }
 
 #dropMenu{
@@ -210,6 +210,18 @@ nav {
 .divbtns{
   display: flex;
 }
+.loner{
+  float: right;
+  margin-right: 45%;
+  background-color: #ffffff;
+  border: 0;
+  border-radius: 3px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0.5em;
+  font-family: 'overlock';
+  z-index: 1;
+
+}
 select#sortieren.btns{
   margin-left: 3vw;
   justify-content: center;
@@ -277,7 +289,11 @@ select#sortieren.btns{
 #zuruck{
   text-decoration: none;
   color: #000000;
-  
+  margin-left: 5%;
+}
+.delitus{
+  margin-left: 5%;
+
 }
 /*Kontakt seite */
 .text {
@@ -320,8 +336,23 @@ iframe {
   display: none;
   /* Das Popup standardmaessig ausblenden */
   position: fixed;
-  top: 200px;
-  left: 21vw;
+  top: 250px;
+  left: 55vw;
+  transform: translate(-50%, -50%);
+  max-width: fit-content;
+  max-height: fit-content;
+  padding: 3vw;
+  background-color: #faf7f0;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  z-index: 20;
+}
+.popup kunden {
+  display: none;
+  /* Das Popup standardmaessig ausblenden */
+  position: fixed;
+  top: 250px;
+  left: 40vw;
   transform: translate(-50%, -50%);
   max-width: fit-content;
   max-height: fit-content;
@@ -344,10 +375,6 @@ iframe {
   position: relative;
   display: inline-block;
 }
-#popbutton2{
-  position: relative;
-  display: inline-block;
-}
 
 /* Stil fuer den Schatten hinter dem Popup-Fenster */
 .overlay {
@@ -365,20 +392,24 @@ iframe {
 /* für Buchdetail Seite */
 .detailbild {
   display: block;
-  width: 25vw;
-  margin-left: 5vw;
+  margin-left: 3%;
 }
+.buchundbes{
+  display: flex;
+  float: left;
+  width: 90vw;
+  margin-left: 2%;
+  margin-bottom: 5%;
 
+}
 .buchdetailTitel {
-  width: 25vw;
-  margin-left: 5vw;
-  margin-top: 10vh;
+  margin-left:4%;
+  font-size: x-large;
 }
 
 .buchdetail {
-  width: 60vw;
+  max-width: 60%;
   margin-left: 5%;
-  margin-top: 5%;
 }
 .detailbild.buchdetail{
   display: table-cell;

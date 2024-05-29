@@ -36,93 +36,104 @@
         $buch = $buchQuery->fetch(PDO::FETCH_ASSOC);
 
     echo '<a id="zuruck" href="buecher.php"> < zurück</a>';
-        echo '<br>';
-        echo '<div class="detailbild">';
+        echo '<br><br>';
+        
         
         
         
         if (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == true) {
             echo '<form action="    " method="post">';
             echo '<input type="hidden" name="id" value="'. $buchID .'">';
-            echo '<button type="submit" name="updateButton">update</button>';
+            echo '<button type="submit" class="delitus" name="updateButton">update</button>';
             echo '</form>';
 
-
-            echo '<div class="buchdetail">';
-            echo '<label>Beschreibung</label><br>';
-            echo '<textarea id="editbuch" rows="5" cols="70">' . $buch['title'] . '</textarea>';
-
-            echo '<br><br>';
-            echo '<label>Autor</label><br>';
-            echo '<input type="text" id="editbuch" value="' . $buch['autor'] . '"/>';
-
-            echo '<br><br>';
-            echo '<label>Kategorie</label><br>';
-            $kategorieOptions = getDropdownOptions($conn, 'kategorien', 'kategorie');
-            echo '<select name="katalog">';
-            foreach ($kategorieOptions as $option) {
-                echo '<option value="' . $option . '"' . ($option === $buch['kategorie'] ? ' selected' : '') . '>' . $option . '</option>';
-            }
-            echo '</select>';
-
-            echo '<br><br>';
-            echo '<label>Zustand</label><br>';
-            $zustandOptions = getDropdownOptions($conn, 'zustaende', 'zustand');
-            echo '<select name="zustand">';
-            foreach ($zustandOptions as $option) {
-                echo '<option value="' . $option . '"' . ($option === $buch['beschreibung'] ? ' selected' : '') . '>' . $option . '</option>';
-            }
-            echo '</select>';
-
-            echo '<br><br>';
-            echo '<label>Katalog</label><br>';
-            echo '<input type="number" name="katalog" value="' . $buch['katalog'] . '">';
-
-            echo '<br><br>';
-            echo '<label>Nummer</label><br>';
-            echo '<input type="number" name="nummer" value="' . $buch['nummer'] . '">';
-
-            echo '<br><br>';
-            echo '<label>Verkauft</label><br>';
-            echo '<input type="checkbox" name="verkauft" value="1" ' . ($buch['verkauft'] ? 'checked' : '') . '>';
-
-            echo '<br><br>';
-            echo '<label>Verfasser</label><br>';
-            echo '<select name="verfasser">';
-            for ($i = 1; $i <= 6; $i++) {
-                echo '<option value="' . $i . '"' . ($i == $buch['verfasser'] ? ' selected' : '') . '>' . $i . '</option>';
-            }
-            echo '</select>';
-
-            echo '<br><br>';
-            echo '<label>Bild</label><br>';
-            echo '<input type="file" name="bild">';
-            echo '<br><br>';
-
-            echo '<label>Käufer</label><br>';
-            echo '<input type="number" name="kaufer" value="' . $buch['kaufer'] . '">';
-            echo '<div>';
-
-            echo '<div>';
             echo '<div class="buchdetailTitel"><br>';
             echo '<label>Titel</label>';
             echo '<input type="text" id="editbuch" value="' . $buch['kurztitle'] . '"/>';
-        
+            echo '</div>';
+            echo '<br>';
+            echo '<div class="buchundbes">';
+                echo '<div class="detailbild">';
+                if ($buch['foto'] === "book.jpg"){
+                    echo '<img src="Bilder/book-cover.svg" alt="buchbild">';
+                } else {
+                    echo '<img src="'. $buch['foto'] .'" alt="buchbild">';
+                }
+                echo '</div>';
+
+
+                echo '<div class="buchdetail">';
+                echo '<label>Beschreibung</label><br>';
+                echo '<textarea id="editbuch" rows="5" cols="70">' . $buch['title'] . '</textarea>';
+
+                echo '<br><br>';
+                echo '<label>Autor</label><br>';
+                echo '<input type="text" id="editbuch" value="' . $buch['autor'] . '"/>';
+
+                echo '<br><br>';
+                echo '<label>Kategorie</label><br>';
+                $kategorieOptions = getDropdownOptions($conn, 'kategorien', 'kategorie');
+                echo '<select name="katalog">';
+                foreach ($kategorieOptions as $option) {
+                    echo '<option value="' . $option . '"' . ($option === $buch['kategorie'] ? ' selected' : '') . '>' . $option . '</option>';
+                }
+                echo '</select>';
+
+                echo '<br><br>';
+                echo '<label>Zustand</label><br>';
+                $zustandOptions = getDropdownOptions($conn, 'zustaende', 'zustand');
+                echo '<select name="zustand">';
+                foreach ($zustandOptions as $option) {
+                    echo '<option value="' . $option . '"' . ($option === $buch['beschreibung'] ? ' selected' : '') . '>' . $option . '</option>';
+                }
+                echo '</select>';
+
+                echo '<br><br>';
+                echo '<label>Katalog</label><br>';
+                echo '<input type="number" name="katalog" value="' . $buch['katalog'] . '">';
+
+                echo '<br><br>';
+                echo '<label>Nummer</label><br>';
+                echo '<input type="number" name="nummer" value="' . $buch['nummer'] . '">';
+
+                echo '<br><br>';
+                echo '<label>Verkauft</label><br>';
+                echo '<input type="checkbox" name="verkauft" value="1" ' . ($buch['verkauft'] ? 'checked' : '') . '>';
+
+                echo '<br><br>';
+                echo '<label>Verfasser</label><br>';
+                echo '<select name="verfasser">';
+                for ($i = 1; $i <= 6; $i++) {
+                    echo '<option value="' . $i . '"' . ($i == $buch['verfasser'] ? ' selected' : '') . '>' . $i . '</option>';
+                }
+                echo '</select>';
+
+                echo '<br><br>';
+                echo '<label>Bild</label><br>';
+                echo '<input type="file" name="bild">';
+                echo '<br><br>';
+
+                echo '<label>Käufer</label><br>';
+                echo '<input type="number" name="kaufer" value="' . $buch['kaufer'] . '">';
+                echo '<div>';
+            echo '</div>';
         }
 
         if ($buch && (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == false) || !isset($_SESSION["loggedin"])) {
             // Buchdetails anzeigen
             echo '<div class="buchdetailTitel">';
-            
                 echo '<h2>Titel: ' . $buch['kurztitle'] . '</h2>';
             echo '</div>';
 
+        echo '<div class="buchundbes">';
+            echo '<div class="detailbild">';
             if ($buch['foto'] === "book.jpg"){
                 echo '<img src="Bilder/book-cover.svg" alt="buchbild">';
             } else {
                 echo '<img src="'. $buch['foto'] .'" alt="buchbild">';
             }
             echo '</div>';
+
             echo '<div class="buchdetail">';
             echo '<p><b>Beschreibung:</b> <br> ' . $buch['title'] . '</p>';
             echo '<p><b>Autor:</b> <br>' . $buch['autor'] . '</p>';
@@ -130,6 +141,7 @@
             echo '<p><b>Zustand:</b> <br>' . $buch['beschreibung'] . '</p>';
             echo '<p><b>Kategorie:</b> <br>' . $buch['kategorie'] . '</p>';
             echo '</div>';
+        echo '</div>';
         }}
    
     if (isset($_POST['update'])) {
