@@ -203,15 +203,12 @@
                 <input type="submit" value="Änderungen bestätigen" name="updateKunde">
             </form>
             
-            
             <button onclick="closeKunden()">Schliessen</button>
             </div>
             <br><br>
             <?php } 
             echo '</div>';
             ?>
-
-
 
     <?php
     if (isset($_POST['submitKunde'])) { // Überprüfen, ob das Formular für das Hinzufügen eines Kunden abgesendet wurde
