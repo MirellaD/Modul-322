@@ -67,7 +67,7 @@
     include('inc/inc.php'); 
     ?>
         <!--beim wählen einer option in der dropdownliste wird durch das ""onchange" die javascript funktion ""updateSortOrder" aufgerufen-->
-    <div class="divbtns">
+<div class="divbtns">
         <select name="sortieren" class="btns" id="sortieren" onchange="updateSortOrder()">
             <option value="default">Sortieren</option>
             <option value="titelAZ">Titel(A-Z)</option>
@@ -129,9 +129,10 @@
             </div>
             <br>
 
-            <?php 
-            if (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == true) { ?>
-            <button class="btns" id="popbutton2" onclick="openHinzufuegen()">Hinzufügen</button>
+</div>
+        <?php 
+        if (isset($_SESSION["loggedin"]) && $_SESSION['loggedin'] == true) { ?>
+            <button class="btns"  id="popbutton" onclick="openHinzufuegen()">Hinzufügen</button>
             <div id="hinzufuegenPop" class="popup">
             <h2>Buch hinzufügen</h2>
 
@@ -151,11 +152,11 @@
             <label for="bookimage">Bild des Buches hochladen:</label>
             <input type="file" name="bookimage" />
             <br>
-        <label for="katalog">Katalog*:</label>
-        <input type="number" name="katalog" id="katalog" min="0" required>
-        <br>
-        <label for="kategorieInsert">Kategorie*:</label>
-        <select name="kategorieInsert" id="kategorieInsert" required>
+            <label for="katalog">Katalog*:</label>
+            <input type="number" name="katalog" id="katalog" min="0" required>
+            <br>
+            <label for="kategorieInsert">Kategorie*:</label>
+            <select name="kategorieInsert" id="kategorieInsert" required>
             <option value="default">kategorien</option>
             <option value="1">Alte Drucke, Bibeln, Klassische Autoren</option>
             <option value="2">Geographie und Reisen</option>
@@ -198,7 +199,7 @@
             <input type="button" name="schliessen" onclick="closeHinzufuegen()" value="Schliessen">
         </div>
     </div>
-</div>
+
 <?php } ?>
 
         <?php
@@ -298,6 +299,7 @@
             $errors = [];
             
             if (empty($kurztitel)) $errors[] = "Kurztitel ist erforderlich.";
+            if (trim(strlen($kurztitel)) > 100) $errors[] = "Der Titel darf maximal 100 Zeichen lang sein.";
             if (empty($autor)) $errors[] = "Autor ist erforderlich.";
             if (empty($nummer)) {
                 $errors[] = "Nummer ist erforderlich.";
@@ -312,29 +314,25 @@
             if ($kategorieInsert === "default") $errors[] = "Kategorie ist erforderlich.";
     
             $fileNameComplete = "book.jpg"; // Default image
-            if (isset($_FILES["file"])) {
-        
-                $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+            if (isset($_FILES["bookimage"]) && $_FILES["bookimage"]["error"] === UPLOAD_ERR_OK) {
+                // Datei wurde erfolgreich hochgeladen, jetzt sicher darauf zugreifen
+                $ext = pathinfo($_FILES['bookimage']['name'], PATHINFO_EXTENSION);
+            
                 $fileAccepted = checkFileExtension($ext);
-                $fileSize = $_FILES['file']['size'];
+                $fileSize = $_FILES['bookimage']['size'];
         
-                if ($fileAccepted && $fileSize <= 8388608) {
-                    $uploadFileName = $_FILES['file']['name'];
+                if ($fileAccepted) {
+                    $uploadFileName = $_FILES['bookimage']['name'];
                     $fileName = strtok($uploadFileName, ".");
                     $fileNameShortened = substr($fileName, 0, 20);
                     $fileNameFinalized = str_replace(' ', '_', $fileNameShortened);
                     $fileNameComplete = $fileNameFinalized . '.' . $ext;
                     $dest = __DIR__ . 'Bilder/' . $fileNameComplete;
         
-                    if (!move_uploaded_file($_FILES['file']['tmp_name'], $dest)) {
-                        $errors[] = "Failed to move uploaded file.";
-                    }
                 } else {
-                    $errors[] = "File not accepted or too large.";
+                    $errors[] = "Falsches Dateiformat";
                 }
-            } elseif (isset($_FILES['file']) && $_FILES['file']['error'] !== UPLOAD_ERR_NO_FILE) {
-                $errors[] = "File upload error: " . $_FILES['file']['error'];
-            };
+            }
 
             if (is_countable($errors) && count($errors) === 0) {
 
@@ -354,7 +352,7 @@
                 echo "Buch erfolgreich hinzugefügt!";
             } else {
                 foreach ($errors as $error) {
-                    echo "<p class='error'>$error</p> <br>";
+                    echo "<p class='error'>$error</p>";
                 }
             }}
         
@@ -364,7 +362,7 @@
         $DatensaetzeSeite = 18;
 
         // Anzahl der Datensätze ermitteln 
-        $AnzahlDatensaetze = $conn->query("SELECT COUNT(*) FROM buecher")->fetchColumn(0);
+        $AnzahlDatensaetze = $conn->query("SELECT COUNT(*) FROM buecher $zustandFilter $kategorie $verfasser $searchTA $searchHome")->fetchColumn(0);
 
         // Die Anzahl der Seiten ermitteln 
         $AnzahlSeiten = ceil($AnzahlDatensaetze / $DatensaetzeSeite);
@@ -456,9 +454,9 @@
                 (($AktuelleSeite - 1) > 0 ? '<a class="vorseite" href="?seite='. ($AktuelleSeite - 1). urlWeitergabe() . '">'. ($AktuelleSeite - 1).'</a>' : '') .            
                 '<label>Seite <input type="text" id="blatttext" value="' . $AktuelleSeite. '" name="seite" size="3" 
                 title="Seitenzahl eingeben und Eingabetaste betätigen"> von ' . $AnzahlSeiten . '</label>' .
-                (($AktuelleSeite + 1) < 181 ? '<a class="vorseite" href="?seite='. ($AktuelleSeite + 1). urlWeitergabe() . '">'. ($AktuelleSeite + 1).'</a>' : '') .
-                (($AktuelleSeite + 2) < 181 ? '<a class="vorseite" href="?seite='. ($AktuelleSeite + 2). urlWeitergabe() . '">'. ($AktuelleSeite + 2).'</a>' : '') .
-                (($AktuelleSeite + 3) < 181 ? '<a class="vorseite" href="?seite='. ($AktuelleSeite + 3). urlWeitergabe() . '">'. ($AktuelleSeite + 3).'</a>' : '') .
+                (($AktuelleSeite + 1) < $AnzahlSeiten ? '<a class="vorseite" href="?seite='. ($AktuelleSeite + 1). urlWeitergabe() . '">'. ($AktuelleSeite + 1).'</a>' : '') .
+                (($AktuelleSeite + 2) < $AnzahlSeiten ? '<a class="vorseite" href="?seite='. ($AktuelleSeite + 2). urlWeitergabe() . '">'. ($AktuelleSeite + 2).'</a>' : '') .
+                (($AktuelleSeite + 3) < $AnzahlSeiten ? '<a class="vorseite" href="?seite='. ($AktuelleSeite + 3). urlWeitergabe() . '">'. ($AktuelleSeite + 3).'</a>' : '') .
                 (($AktuelleSeite + 1) <= $AnzahlSeiten ?
                 //doppelpfeil nach rechts springt auf die letzte Seite
                 ' <a class="pfeil" href="?seite=' . $AnzahlSeiten . urlWeitergabe() . '">&#9658;&#9658;</a>' . '<br>' .
@@ -497,7 +495,6 @@
             // gibt schliesslich den Wert $urlErweiterung zurück
                 return $urlErweiterung;
             }
-
 
         include('inc/footer.php');
         ?>

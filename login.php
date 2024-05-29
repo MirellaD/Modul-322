@@ -27,7 +27,7 @@
 if(isset($_POST['username']) && isset($_POST['password'])){ 
     $username = htmlspecialchars(trim($_POST['username']));
     $password = trim($_POST['password']);
-    $statement = $conn->prepare("SELECT * FROM `benutzer` WHERE `Benutzername` = :username"); 
+    $statement = $conn->prepare("SELECT * FROM `benutzer` WHERE `benutzername` = :username"); 
     $statement->execute(array(':username' => $username)); 
     $benutzer = $statement->fetch();
     

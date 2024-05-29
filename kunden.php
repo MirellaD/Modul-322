@@ -28,8 +28,10 @@
             document.getElementById('hinzufuegenPop').style.display = 'none';
 
         }
-        function openKunden() {
+        function openKunden(kid) {
+            window.location.href = window.location.pathname + "?kid=" + kid;
             document.getElementById('popupKunden').style.display = 'block';
+
 
         }
 
@@ -147,54 +149,159 @@
                 <input type="button" name="schliessen" onclick="closeHinzufuegen()" value="Schliessen">
             </div>
         </div>
+
+        <div id="popupKunden" class="popupKunden">
+            <?php
+            if (isset($_GET['kid'])) {
+                $kID = $_GET['kid'];
+
+                $Query = $conn->prepare("SELECT * FROM kunden WHERE kid = :id");
+                $Query->bindParam(':id', $kID, PDO::PARAM_INT);
+                $Query->execute();
+                $kunde = $Query->fetch(PDO::FETCH_ASSOC);
+            ?>
+            <form action="kunden.php" method="post">
+                <input type="hidden" name="id" value="<?= $kID ?>">
+                <em id="kundeI">Id: <?= $kunde['kid'] ?></em>
+                <br>
+                <label>Vorname: </label>
+                <input type="text" name="vorname" value="<?= htmlspecialchars($kunde['vorname']) ?>" required>
+                <br>
+                <label>Nachname: </label>
+                <input type="text" name="nachname" value="<?= htmlspecialchars($kunde['name']) ?>" required>
+                <br>
+                <label>Geschlecht: </label>
+                <?php if ($kunde['geschlecht'] === "M"): ?>
+                    <input type="radio" name="geschlecht" id="F" value="F"> Weiblich
+                    <input type="radio" name="geschlecht" id="M" value="M" checked> Männlich
+                <?php elseif ($kunde['geschlecht'] === "F"): ?>
+                    <input type="radio" name="geschlecht" id="F" value="F" checked> Weiblich
+                    <input type="radio" name="geschlecht" id="M" value="M"> Männlich
+                <?php endif ?>
+                <br>
+                <label>Geb.: </label>
+                <input type="date" name="gebu" id="gebu" value="<?= $kunde['geburtstag'] ?>">
+                <br>
+                <label>E-Mail: </label>
+                <input type="email" name="email" id="email" value="<?= $kunde['email'] ?>" required>
+                <br>
+                <label>Kunde seit: </label>
+                <input type="date" name="kundeSeit" id="kundeSeit" value="<?= $kunde['kunde_seit'] ?>">
+                <br>
+                <label>Kontakt per Mail: </label>
+                <?php if ($kunde['kontaktpermail'] === 1): ?>
+                    <input type="checkbox" name="1" id="1" value="1" checked>
+                <?php else: ?>
+                    <input type="checkbox" name="1" id="1" value="1">
+                <?php endif ?>
+                <br>
+                <input type="submit" value="Änderungen bestätigen" name="updateKunde">
+            </form>
+            <button onclick="closeKunden()">Schliessen</button>
+            <?php } ?>
+        </div>
+
 </div>    
 
-        <?php
-        if (isset($_POST['submitKunde'])){
 
-            $sql = "SELECT MAX(kid) AS idMax FROM kunden";
-            $stmt = $conn->query($sql);
-            $row = $stmt->fetch();
+    <?php
+    if (isset($_POST['submitKunde'])){
 
-            $idMax = $row['idMax'];
-            $kid = $idMax + 1;
-            
-            $vorname = trim($_POST['vorname']);
-            $name = trim($_POST['nachname']);
-            $geschlecht = $_POST['geschlecht'];
-            $email = trim($_POST['email']);
-            $gebu = $_POST['gebu'];
-            $kontakt = isset($_POST['1']);
-            $kundeSeit = date('Y-m-d');;
+        $sql = "SELECT MAX(kid) AS idMax FROM kunden";
+        $stmt = $conn->query($sql);
+        $row = $stmt->fetch();
+
+        $idMax = $row['idMax'];
+        $kid = $idMax + 1;
+        
+        $vorname = trim($_POST['vorname']);
+        $name = trim($_POST['nachname']);
+        $geschlecht = $_POST['geschlecht'];
+        $email = trim($_POST['email']);
+        $gebu = $_POST['gebu'];
+        $kontakt = isset($_POST['1']);
+        $kundeSeit = date('Y-m-d');;
 
 
-            $errors = [];
-            
-            if (empty($vorname)) $errors[] = "Vorname ist erforderlich.";
-            if (empty($name)) $errors[] = "Nachname ist erforderlich.";
-            if (empty($email)) $errors[] = "Email ist erforderlich.";
+        $errors = [];
+        
+        if (empty($vorname)) $errors[] = "Vorname ist erforderlich.";
+        if (empty($name)) $errors[] = "Nachname ist erforderlich.";
+        if (empty($email)) $errors[] = "Email ist erforderlich.";
 
-            if (is_countable($errors) && count($errors) === 0) {
+        if (is_countable($errors) && count($errors) === 0) {
 
-                $stmt = $conn->prepare("INSERT INTO kunden (kid, geburtstag, vorname, name, geschlecht, kunde_seit, email, kontaktpermail)
-                                        VALUES (:kid, :gebu, :vorn, :name, :geschlecht, :seit, :email, :kontakt)");
-                $stmt->bindParam(':kid', $kid);
-                $stmt->bindParam(':gebu', $gebu);
-                $stmt->bindParam(':vorn', $vorname);
-                $stmt->bindParam(':name', $name);
-                $stmt->bindParam(':geschlecht', $geschlecht);
-                $stmt->bindParam(':seit', $kundeSeit);
-                $stmt->bindParam(':email', $email);
-                $stmt->bindParam(':kontakt', $kontakt);
+            $stmt = $conn->prepare("INSERT INTO kunden (kid, geburtstag, vorname, name, geschlecht, kunde_seit, email, kontaktpermail)
+                                    VALUES (:kid, :gebu, :vorn, :name, :geschlecht, :seit, :email, :kontakt)");
+            $stmt->bindParam(':kid', $kid);
+            $stmt->bindParam(':gebu', $gebu);
+            $stmt->bindParam(':vorn', $vorname);
+            $stmt->bindParam(':name', $name);
+            $stmt->bindParam(':geschlecht', $geschlecht);
+            $stmt->bindParam(':seit', $kundeSeit);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':kontakt', $kontakt);
 
-                $stmt->execute();
-                echo "Kunde erfolgreich hinzugefügt!";
+            $stmt->execute();
+            echo "Kunde erfolgreich hinzugefügt!";
+        } else {
+            foreach ($errors as $error) {
+                echo "<p class='error'>$error</p>";
+            }
+        }}
+
+
+        // Überprüfen, ob das Formular zum Aktualisieren des Kunden gesendet wurde
+    if (isset($_POST['updateKunde'])) {
+        // Die ID des Kunden aus dem Formular erhalten
+        $kID = $_POST['id'];
+
+        // Die anderen Formularwerte erhalten
+        $vorname = $_POST['vorname'];
+        $name = $_POST['nachname'];
+        $geschlecht = $_POST['geschlecht'];
+        $email = $_POST['email'];
+        $gebu = $_POST['gebu'];
+        $kundeSeit = $_POST['kundeSeit'];
+        $kontakt = isset($_POST['1']) ? 1 : 0;
+
+        // Fehlerarray initialisieren
+        $errors = [];
+
+        // Validierung der Formulardaten (kann je nach Anforderungen angepasst werden)
+        if (empty($vorname)) $errors[] = "Vorname ist erforderlich.";
+        if (empty($name)) $errors[] = "Nachname ist erforderlich.";
+        if (empty($email)) $errors[] = "Email ist erforderlich.";
+
+        // Überprüfen, ob Fehler aufgetreten sind
+        if (empty($errors)) {
+            // Vorbereitung des Update-Statements
+            $updateStmt = $conn->prepare("UPDATE kunden SET vorname = :vorname, name = :name, geschlecht = :geschlecht, 
+                                            geburtstag = :gebu, email = :email, kunde_seit = :kundeSeit, kontaktpermail = :kontakt 
+                                            WHERE kid = :kid");
+            // Binden der Parameter
+            $updateStmt->bindParam(':vorname', $vorname);
+            $updateStmt->bindParam(':name', $name);
+            $updateStmt->bindParam(':geschlecht', $geschlecht);
+            $updateStmt->bindParam(':gebu', $gebu);
+            $updateStmt->bindParam(':email', $email);
+            $updateStmt->bindParam(':kundeSeit', $kundeSeit);
+            $updateStmt->bindParam(':kontakt', $kontakt);
+            $updateStmt->bindParam(':kid', $kID);
+
+            // Ausführen des Update-Statements
+            if ($updateStmt->execute()) {
+                echo "Kunde erfolgreich aktualisiert!";
             } else {
-                foreach ($errors as $error) {
-                    echo "<p class='error'>$error</p> <br>";
-                }
-            }}
-
+                echo "Fehler beim Aktualisieren des Kunden!";
+            }
+        } else {
+            // Ausgabe der Fehlermeldungen
+            foreach ($errors as $error) {
+                echo "<p class='error'>$error</p>";
+            }
+        }
+    }    
         // Standard Sortierreihenfolge
         $kollone = 'kid';
         $orderSort = 'ASC';
@@ -256,7 +363,7 @@
         $DatensaetzeSeite = 18;
 
         // Anzahl der Datensätze ermitteln 
-        $AnzahlDatensaetze = $conn->query("SELECT COUNT(*) FROM kunden")->fetchColumn(0);
+        $AnzahlDatensaetze = $conn->query("SELECT COUNT(*) FROM kunden $geschlecht $KpE $searchVN")->fetchColumn(0);
 
         // Die Anzahl der Seiten ermitteln 
         $AnzahlSeiten = ceil($AnzahlDatensaetze / $DatensaetzeSeite);
@@ -306,56 +413,13 @@
                 echo '<input type="hidden" name="id" value="'. $nachricht->kid .'">';
                 echo '<button type="submit" name="delete"><img src="Bilder/delete.svg" alt="Delete"></button>';
                 echo '</form>';
-                echo '<button type="button" onclick="openKunden()" value="'. $nachricht->kid .'">ändern</button>';
+                echo '<button type="button" onclick="openKunden('. $nachricht->kid .')">ändern</button>';
+                ;
                 echo '</div>';
                 echo '<br>';
             }
         }
         echo '</div>';
-
-        /*echo '<div id="popupKunden" class="popupKunden">';
-            if (isset($_POST['kid'])) {
-                $kID = $_GET['kid'];
-
-                $Query = $conn->prepare("SELECT * FROM kunden WHERE kid = :id");
-                $Query->bindParam(':id', $kID, PDO::PARAM_INT);
-                $Query->execute();
-                $kunde = $Query->fetch(PDO::FETCH_ASSOC);
-
-            echo '<form action="kunden.php" method="post">';
-            echo '<input type="hidden" name="id" value="' . $kid . '">';
-            echo '<em id="kundeI">Id: ' . $nachricht->kid . '</em>';
-            echo '<label>Vorname: </label>';
-            echo '<input type="text" name="vorname" value="' . htmlspecialchars($kunde['vorname']) . '" required>';
-            echo '<label>Nachname: </label>';
-            echo '<input type="text" name="vorname" value="' . htmlspecialchars($kunde['name']) . '" required>';
-            echo '<label>Geschlecht: </label>';
-            if ($kunde['geschlecht'] === "M"){
-                echo '<input type="radio" name="geschlecht" id="F" value="F"> Weiblich'.
-                    '<input type="radio" name="geschlecht" id="M" value="M" checked> Männlich';
-            }elseif ($kunde['geschlecht'] === "F"){
-                echo '<input type="radio" name="geschlecht" id="F" value="F" checked> Weiblich'.
-                    '<input type="radio" name="geschlecht" id="M" value="M"> Männlich';
-            }
-            echo '<label>Geb.: </label>';
-            echo '<input type="date" name="gebu" id="gebu" value="'.$kunde['geburtstag'].'">';
-            echo '<label>E-Mail: </label>';
-            echo '<input type="email" name="email" id="email" value="'. $kunde['email'] .'" required>';
-            echo '<label>Kunde seit: </label>';
-            echo '<input type="date" name="kundeSeit" id="kundeSeit" value="'.$kunde['kunde_seit'].'">';
-            echo '<label>Kontakt per Mail: </label>';
-            if ($kunde['kontaktpermail' === 1]){
-                echo '<input type="checkbox" name="1" id="1" value="1" checked>';
-            }else{
-                echo '<input type="checkbox" name="1" id="1" value="1">';
-            }
-            echo '<input type="submit" value="Änderungen bestätigen" name="updateKunde">';
-            echo '</form>';
-
-            echo '<button onclick="closeKunden()">Schließen</button>';
-            }
-        echo '</div>';
-*/
 
             //Formular und Blätterfunktion
             echo '<form class="blättern" method="GET" autocomplete="off">' .
@@ -369,9 +433,9 @@
                 (($AktuelleSeite - 1) > 0 ? '<a class="vorseite" href="?seite='. ($AktuelleSeite - 1). urlWeitergabe() . '">'. ($AktuelleSeite - 1).'</a>' : '') .            
                 '<label>Seite <input type="text" id="blatttext" value="' . $AktuelleSeite. '" name="seite" size="3" 
                 title="Seitenzahl eingeben und Eingabetaste betätigen"> von ' . $AnzahlSeiten . '</label>' .
-                (($AktuelleSeite + 1) < 181 ? '<a class="vorseite" href="?seite='. ($AktuelleSeite + 1). urlWeitergabe() . '">'. ($AktuelleSeite + 1).'</a>' : '') .
-                (($AktuelleSeite + 2) < 181 ? '<a class="vorseite" href="?seite='. ($AktuelleSeite + 2). urlWeitergabe() . '">'. ($AktuelleSeite + 2).'</a>' : '') .
-                (($AktuelleSeite + 3) < 181 ? '<a class="vorseite" href="?seite='. ($AktuelleSeite + 3). urlWeitergabe() . '">'. ($AktuelleSeite + 3).'</a>' : '') .
+                (($AktuelleSeite + 1) < $AnzahlSeiten ? '<a class="vorseite" href="?seite='. ($AktuelleSeite + 1). urlWeitergabe() . '">'. ($AktuelleSeite + 1).'</a>' : '') .
+                (($AktuelleSeite + 2) < $AnzahlSeiten ? '<a class="vorseite" href="?seite='. ($AktuelleSeite + 2). urlWeitergabe() . '">'. ($AktuelleSeite + 2).'</a>' : '') .
+                (($AktuelleSeite + 3) < $AnzahlSeiten ? '<a class="vorseite" href="?seite='. ($AktuelleSeite + 3). urlWeitergabe() . '">'. ($AktuelleSeite + 3).'</a>' : '') .
                 (($AktuelleSeite + 1) <= $AnzahlSeiten ?
                 //doppelpfeil nach rechts springt auf die letzte Seite
                 ' <a class="pfeil" href="?seite=' . $AnzahlSeiten . urlWeitergabe() . '">&#9658;&#9658;</a>' . '<br>' .

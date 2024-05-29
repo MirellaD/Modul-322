@@ -377,8 +377,11 @@ iframe {
 
 .buchdetail {
   width: 60vw;
-  margin-left: 33vw;
-  margin-top: -50vh;
+  margin-left: 5%;
+  margin-top: 5%;
+}
+.detailbild.buchdetail{
+  display: table-cell;
 }
 #grosspassform{
   display: flex;

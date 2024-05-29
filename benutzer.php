@@ -38,11 +38,20 @@ include('inc/inc.php');
 <?php 
 if(isset($_POST['newUser'])){ 
 
+    $errors = [];
+    $statement = $conn->prepare("SELECT `benutzername` FROM `benutzer`");  
+    $statement->execute();
+    $existierendeNamen = $statement->fetchAll(PDO::FETCH_COLUMN);
+
+
     if (trim($_POST['pass']) !== trim($_POST['passB'])) $errors[] = "Eingegebene Passwörter stimmen nicht überein.";
     if (strlen(trim($_POST['pass'])) < 8) $errors[] = "Passwort muss mindestens 8 Zeichen lang sein.";
     if (empty($_POST['username'])) $errors[] = "Benutzername erforderlich.";
     if (empty($_POST['pass'])) $errors[] = "Passwort erforderlich.";
     if (strlen(trim($_POST['username'])) > 45) $errors[] = "Benutzername darf maximal 45 Zeichen lang sein.";
+    if (in_array($_POST['username'], $existierendeNamen)) {
+        $errors[] = "Benutzername existiert bereits, bitte wählen Sie einen anderen Benutzernamen.";
+    }
 
     if (is_countable($errors) && count($errors) === 0){
     $username = htmlspecialchars(trim($_POST['username']));
@@ -68,7 +77,7 @@ if(isset($_POST['newUser'])){
     }
 }else{
     foreach ($errors as $error) {
-        echo "<p class='error'>$error</p> <br>";
+        echo "<p class='error'>$error</p>";
     }
 }}
 ?>
